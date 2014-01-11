@@ -19,6 +19,14 @@ CREATE TABLE `user`(
   INDEX (`user_name`)
 ) ENGINE=INNODB CHARSET=utf8 COLLATE=utf8_bin;
 
+INSERT INTO `user` (`user_name`,`password`,`first_name`,`user_type_id`,`is_valid_user`) VALUES
+('admin',MD5('admin'),'Admin',50,1),
+('arma',MD5('aram'),'Aram',50,1),
+('ashot',MD5('ashot'),'Ashot',50,1),
+('grish',MD5('grish'),'Grish',50,1),
+('karen',MD5('karen'),'Karen',50,1);
+
+
 CREATE TABLE `user_type`(
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` CHAR(50) NOT NULL,
