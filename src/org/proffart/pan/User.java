@@ -27,7 +27,7 @@ public class User extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-		out.print("Barev Axper Jan !");
+	    out.print("Barev Axper Jan !");
 	}
 
 	/**
