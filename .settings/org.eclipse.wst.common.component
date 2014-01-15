@@ -2,6 +2,7 @@
     <wb-module deploy-name="360sites.org">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/properties"/>
         <property name="context-root" value="360sites.org"/>
         <property name="java-output-path" value="/360sites.org/build/classes"/>
     </wb-module>
