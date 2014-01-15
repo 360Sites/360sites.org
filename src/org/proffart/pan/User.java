@@ -2,6 +2,7 @@ package org.proffart.pan;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,8 +31,17 @@ public class User extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-	    out.print("Barev Axper Jan !");
+	    out.println("Barev Axper Jan !");
 	    LOG.info("Test log4j");
+	    try{
+		    DbMAnager db = DbMAnager.getInstance();
+		    String sql = "SELECT * FROM `user` WHERE `user_name` = 'admin'";
+		    HashMap<String, String> res = db.getRow(sql);
+		    out.println("Barev "+res.get("first_name")+" Jan !");
+	    }catch(Exception e){
+	    	e.printStackTrace();
+	    }
+	    
 	}
 
 	/**
