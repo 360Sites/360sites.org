@@ -1,6 +1,7 @@
 package org.proffart.pan;
 
 
+import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,6 +10,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 
@@ -126,6 +128,29 @@ public class DbMAnager {
 			throw new Exception(e);
 		}
 	}
+	
+	public void insert( String tableName, HashMap<String, Object> insert ) throws Exception {
+		String str1 = "";
+		String str2 = "";
+		ArrayList<String> val = new ArrayList<String>();
+		for( Map.Entry<String, Object> entry : insert.entrySet() ) {
+			str1 += "`"+ entry.getKey() +"`, ";
+			str2 += "'?', ";
+			val.add( entry.getValue().toString() );
+		    //System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+		}
+		str1 = str1.substring(0,-2);
+		str2 = str2.substring(0,-2);
+		String sql = "INSERT INTO `"+tableName+"` ("+str1+") VALUES ("+str2+")";
+		PreparedStatement pstmt = connection.prepareStatement( sql );
+		for( int i=1; i<=val.size(); i++ ) {
+			pstmt.setString(i, val.get(i-1));
+		}
+		if(!pstmt.execute()){
+			throw new Exception("error in db");
+		}
+	}
+	
 	
 	private ArrayList<HashMap<String, String>> executeAndGetHashMap( PreparedStatement pstmt ) throws Exception  {
 		try{
