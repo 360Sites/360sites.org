@@ -34,7 +34,7 @@ public class User extends HttpServlet {
 	    out.println("Barev Axper Jan !");
 	    LOG.info("Test log4j");
 	    try{
-		    DbMAnager db = DbMAnager.getInstance();
+		    DbManager db = DbManager.getInstance();
 		    String sql = "SELECT * FROM `user` WHERE `user_name` = 'admin'";
 		    HashMap<String, String> res = db.getRow(sql);
 		    out.println("Barev "+res.get("first_name")+" Jan !");

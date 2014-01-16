@@ -1,7 +1,9 @@
 package org.proffart.pan;
 
 
-import java.lang.reflect.Array;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,63 +12,98 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
+import java.util.Vector;
+import org.apache.log4j.Logger;
 import java.util.Map;
 
 
 
+/**
+ * 
+ *  * @author Karen S.,  Ashot M.
+ *  * @version 1.0.1
+ *    copyright 360Sites ,Proffart team 2013
+ *     
+ *
+ */
 
-
-
-
-
-public class DbMAnager {
+public class DbManager {
 	
-	private static boolean isInit = false;
-	private static DbMAnager DbMAnagerInstance;
+	
 	private static Connection connection;
-	
-	private static String DB_URL = "jdbc:mysql://localhost:3306/360sites";
-	//?autoReconnect=true&useUnicode=true&characterEncoding=utf8
-	private static String DB_USERNAME = "root";
-	private static String DB_PASSWORD = "";
-	
+	static Logger LOG = Logger.getLogger(DbManager.class);
 	private ResultSetMetaData rsmd;
+	private static boolean isInit =false;
+	private static DbManager DbManagerInstance;
 	
 	
-	private DbMAnager() throws Exception {
-		try{
-			Class.forName("com.mysql.jdbc.Driver");
-			//getConfig();
-			connection = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD); 
-			
-			isInit = true;
-		}catch( SQLException e ){
-			e.printStackTrace();
-			throw new Exception();
-		}
+	
+	private DbManager() throws Exception {
+		Class.forName("com.mysql.jdbc.Driver");
+		//getConfig();
+		getConnection(); 
+		
+		isInit = true;
 	}
-	public static DbMAnager getInstance() throws Exception {
+	public static DbManager getInstance() throws Exception {
 		try{
 			if(!isInit) {
-				DbMAnagerInstance = new DbMAnager();
+				DbManagerInstance = new DbManager();
 			}
-			return DbMAnagerInstance;
+			return DbManagerInstance;
 		}catch( Exception e ){
 			e.printStackTrace();
 			throw new Exception(e);
 		}
 	}
-	public static Connection getConnection() throws Exception {
-		try{
-			if(!isInit) {
-				DbMAnagerInstance = new DbMAnager();
-			}
-			return connection;
-		}catch( Exception e ) {
+	
+	/**
+	 * *@return Connection 
+	 * *@category Database  	  
+	 */
+	private static Connection getConnection()
+	{
+		Properties DBprop=new Properties();
+		try {
+			DBprop.load(new FileInputStream("properties/DBconfig.properties"));
+		} catch (FileNotFoundException e) {
+			
+			LOG.error("Error connecting DB: Cannot find DB property file");			
 			e.printStackTrace();
-			throw new Exception(e);
+		} catch (IOException e) {
+			LOG.error("Error connecting DB: IO Exception");
+			e.printStackTrace();
 		}
+		try {
+			Class.forName(DBprop.getProperty("MySqlDriver"));
+		} catch (ClassNotFoundException e) {
+			LOG.error("Error connecting DB: Cannot find MysqlDriver");
+			e.printStackTrace();
+		}
+		
+		//Getting properties from file
+		String DB_USERNAME = DBprop.getProperty("DBUserName");
+		String DB_PASSWORD = DBprop.getProperty("DBUserPassword");
+		String serverName=DBprop.getProperty("ServerName");	
+		String databaseName=DBprop.getProperty("DBName");
+		//Database URL
+		String DB_URL="jdbc:mysql://" + serverName + "/" + databaseName;	
+		
+		//Connecting to database
+		try {
+			connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+		} catch (SQLException e) {
+			LOG.error("Error connecting DB: SQL Error getting connection");
+			e.printStackTrace();
+		}
+		
+		return connection;
 	}
+	
+
+
+	
 	
 	public HashMap<String, String> getRow( String sql ) throws Exception {
 		try{
@@ -196,17 +233,4 @@ public class DbMAnager {
 			throw new Exception(e);
 		}
 	}
-	/*private void getConfig() throws Exception {
-		try{
-			Properties prop = new Properties();
-			
-			prop.load(DbMAnager.class.getClassLoader().getResourceAsStream("config.properties"));
-			DB_URL = prop.getProperty("db_url");
-			DB_USERNAME = prop.getProperty("db_username");
-			DB_PASSWORD = prop.getProperty("db_password");
-			
-		}catch( IOException e ){
-			throw new Exception(e);
-		}
-	}*/
 }
