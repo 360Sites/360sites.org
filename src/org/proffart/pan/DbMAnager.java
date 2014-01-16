@@ -7,8 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 
 
 
@@ -18,6 +18,7 @@ import java.util.Vector;
 
 
 public class DbMAnager {
+	
 	private static boolean isInit = false;
 	private static DbMAnager DbMAnagerInstance;
 	private static Connection connection;
@@ -26,6 +27,9 @@ public class DbMAnager {
 	//?autoReconnect=true&useUnicode=true&characterEncoding=utf8
 	private static String DB_USERNAME = "root";
 	private static String DB_PASSWORD = "";
+	
+	private ResultSetMetaData rsmd;
+	
 	
 	private DbMAnager() throws Exception {
 		try{
@@ -38,9 +42,6 @@ public class DbMAnager {
 			e.printStackTrace();
 			throw new Exception();
 		}
-	}
-	public static String xz()  {
-		return "sdsd";
 	}
 	public static DbMAnager getInstance() throws Exception {
 		try{
@@ -68,7 +69,8 @@ public class DbMAnager {
 	public HashMap<String, String> getRow( String sql ) throws Exception {
 		try{
 			HashMap<String, String> map = new HashMap<String, String>();
-			Vector<HashMap<String, String>> list = getRowSet(sql);
+			PreparedStatement pstmt = connection.prepareStatement( sql );
+			ArrayList<HashMap<String, String>> list = executeAndGetHashMap(pstmt);
 			if(list.size() == 1){
 				map = list.get(0);
 			}
@@ -78,13 +80,59 @@ public class DbMAnager {
 			throw new Exception(e);
 		}
 	}
-	public Vector<HashMap<String, String>> getRowSet( String sql ) throws Exception {
-		Vector<HashMap<String, String>> row = new Vector<HashMap<String, String>>();
+	public HashMap<String, String> getRow( PreparedStatement pstmt ) throws Exception {
+		try{
+			HashMap<String, String> map = new HashMap<String, String>();
+			ArrayList<HashMap<String, String>> list = executeAndGetHashMap(pstmt);
+			if(list.size() == 1){
+				map = list.get(0);
+			}
+			return map;
+		}catch( Exception e ){
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+	}
+	public ArrayList<ArrayList<String>> getRowSet( String sql ) throws Exception {
 		try{
 			PreparedStatement pstmt = connection.prepareStatement( sql );
+			ArrayList<ArrayList<String>> row = executeAndGetList(pstmt);
+			return row;
+		}catch( Exception e ){
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+	}
+	public ArrayList<ArrayList<String>> getRowSet( PreparedStatement pstmt  ) throws Exception {
+		try{
+			ArrayList<ArrayList<String>> row = new ArrayList<ArrayList<String>>();
+			row = executeAndGetList(pstmt);
+			return row;
+		}catch( Exception e ){
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+	}
+	public ArrayList<String> getField() throws Exception{
+		try{
+			ArrayList<String> ret = new ArrayList<String>();
+			for(int col = 1; col <= rsmd.getColumnCount(); col++) {
+				String fildeName = rsmd.getColumnName(col);
+				ret.add(fildeName);
+			}
+			return ret;
+		}catch( Exception e ){
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+	}
+	
+	private ArrayList<HashMap<String, String>> executeAndGetHashMap( PreparedStatement pstmt ) throws Exception  {
+		try{
+			ArrayList<HashMap<String, String>> row = new ArrayList<HashMap<String, String>>();
 			if(pstmt.execute()){
 				ResultSet rs = pstmt.getResultSet();
-				ResultSetMetaData rsmd = rs.getMetaData();
+				rsmd = rs.getMetaData();
 				while (rs.next()) {
 					HashMap<String, String> map = new HashMap<String, String>();
 					for(int col = 1; col <= rsmd.getColumnCount(); col++) {
@@ -101,7 +149,28 @@ public class DbMAnager {
 			throw new Exception(e);
 		}
 	}
-	
+	private ArrayList<ArrayList<String>> executeAndGetList( PreparedStatement pstmt ) throws Exception  {
+		try{
+			ArrayList<ArrayList<String>> row = new ArrayList<ArrayList<String>>();
+			if(pstmt.execute()){
+				ResultSet rs = pstmt.getResultSet();
+				rsmd = rs.getMetaData();
+				while (rs.next()) {
+					ArrayList<String> map = new ArrayList<String>();
+					for(int col = 1; col <= rsmd.getColumnCount(); col++) {
+						//String fildeName = rsmd.getColumnName(col);
+						//int type = rsmd.getColumnType(col);
+						map.add(rs.getString(col));
+					}
+					row.add(map);
+				}
+			}
+			return row;
+		}catch( Exception e ){
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+	}
 	/*private void getConfig() throws Exception {
 		try{
 			Properties prop = new Properties();
