@@ -32,16 +32,19 @@ public class User {
 		try {
 			DbManager db = DbManager.getInstance();
 			Connection connection  = DbManager.getConnection();
+			
+			//generacnum enq sql zaprosy
 			String sql = "SELECT *, MD5(?) AS external_password FROM `user` WHERE `user_name` = ?";
 			PreparedStatement pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, password);
 			pstmt.setString(2, userName);
 			HashMap<String, String> userInfo = db.getRow(pstmt);
-			if( userInfo.get("id") != null ) {
-				if( userInfo.get("password").equals(userInfo.get("external_password")) ) {
+			if( userInfo.get("id") != null ) { //ete tox ka uremn etenc user ka u id uni
+				if( userInfo.get("password").equals(userInfo.get("external_password")) ) { //hamematum enq bazay u ekac passwordneri md5 hasery
 					boolean isValidUser = (userInfo.get("is_valid_user").equals("1"));
-					if( isValidUser ) {
+					if( isValidUser ) { //stugum enq tvyal usery akti e te voch ete voch login cheq anum
 						isLogined = true;
+						//sesiaym grum enq perkakan informacia vory karox e shat texer petq gal
 						session.setAttribute("user_name", userInfo.get("user_name"));
 						session.setAttribute("user_id", userInfo.get("id"));
 						session.setAttribute("user_type_id", userInfo.get("user_type_id"));
