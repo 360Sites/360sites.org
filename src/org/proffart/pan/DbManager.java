@@ -12,10 +12,10 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
-import java.util.Vector;
-import org.apache.log4j.Logger;
 import java.util.Map;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
 
 
 
@@ -39,31 +39,26 @@ public class DbManager {
 	
 	
 	
-	private DbManager() throws Exception {
-		Class.forName("com.mysql.jdbc.Driver");
-		//getConfig();
+	private DbManager() {
 		getConnection(); 
-		
 		isInit = true;
 	}
-	public static DbManager getInstance() throws Exception {
-		try{
-			if(!isInit) {
-				DbManagerInstance = new DbManager();
-			}
-			return DbManagerInstance;
-		}catch( Exception e ){
-			e.printStackTrace();
-			throw new Exception(e);
+	public static DbManager getInstance() {
+		if(!isInit) {
+			DbManagerInstance = new DbManager();
 		}
+		return DbManagerInstance;
 	}
 	
 	/**
 	 * *@return Connection 
 	 * *@category Database  	  
 	 */
-	private static Connection getConnection()
+	public static Connection getConnection()
 	{
+		if(isInit) {
+			return connection;
+		}
 		Properties DBprop=new Properties();
 		try {
 			DBprop.load(new FileInputStream("properties/DBconfig.properties"));
@@ -85,8 +80,9 @@ public class DbManager {
 		//Getting properties from file
 		String DB_USERNAME = DBprop.getProperty("DBUserName");
 		String DB_PASSWORD = DBprop.getProperty("DBUserPassword");
-		String serverName=DBprop.getProperty("ServerName");	
-		String databaseName=DBprop.getProperty("DBName");
+		String serverName  = DBprop.getProperty("ServerName");	
+		String databaseName= DBprop.getProperty("DBName");
+		
 		//Database URL
 		String DB_URL="jdbc:mysql://" + serverName + "/" + databaseName;	
 		
@@ -172,9 +168,8 @@ public class DbManager {
 		ArrayList<String> val = new ArrayList<String>();
 		for( Map.Entry<String, Object> entry : insert.entrySet() ) {
 			str1 += "`"+ entry.getKey() +"`, ";
-			str2 += "'?', ";
+			str2 += "?, ";
 			val.add( entry.getValue().toString() );
-		    //System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 		}
 		str1 = str1.substring(0,-2);
 		str2 = str2.substring(0,-2);
@@ -199,7 +194,6 @@ public class DbManager {
 					HashMap<String, String> map = new HashMap<String, String>();
 					for(int col = 1; col <= rsmd.getColumnCount(); col++) {
 						String fildeName = rsmd.getColumnName(col);
-						//int type = rsmd.getColumnType(col);
 						map.put(fildeName, rs.getString(col));
 					}
 					row.add(map);
@@ -220,8 +214,6 @@ public class DbManager {
 				while (rs.next()) {
 					ArrayList<String> map = new ArrayList<String>();
 					for(int col = 1; col <= rsmd.getColumnCount(); col++) {
-						//String fildeName = rsmd.getColumnName(col);
-						//int type = rsmd.getColumnType(col);
 						map.add(rs.getString(col));
 					}
 					row.add(map);
