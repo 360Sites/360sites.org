@@ -1,7 +1,6 @@
 package org.proffart.pan;
 
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.lang.Object;
 
 import org.apache.log4j.Logger;
 
@@ -36,7 +36,7 @@ public class DbManager {
 	private ResultSetMetaData rsmd;
 	private static boolean isInit =false;
 	private static DbManager DbManagerInstance;
-	
+	private static String dbPropertyFile="//properties//DBconfig.properties";
 	
 	
 	private DbManager() {
@@ -53,18 +53,20 @@ public class DbManager {
 	/**
 	 * *@return Connection 
 	 * *@category Database  	  
+	 *
 	 */
-	public static Connection getConnection()
+	public static Connection getConnection() 
 	{
 		if(isInit) {
 			return connection;
 		}
 		Properties DBprop=new Properties();
 		try {
-			DBprop.load(new FileInputStream("properties/DBconfig.properties"));
-		} catch (FileNotFoundException e) {
 			
-			LOG.error("Error connecting DB: Cannot find DB property file");			
+			LOG.info("Getting DB config file: "+ dbPropertyFile);
+			DBprop.load(DbManager.class.getResourceAsStream(dbPropertyFile));
+		} catch (FileNotFoundException e) {
+			LOG.error("Error connecting DB: Cannot find DB property file ");			
 			e.printStackTrace();
 		} catch (IOException e) {
 			LOG.error("Error connecting DB: IO Exception");
@@ -89,6 +91,7 @@ public class DbManager {
 		//Connecting to database
 		try {
 			connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+			LOG.info("Connected to DB: Server="+serverName+", User="+DB_USERNAME);
 		} catch (SQLException e) {
 			LOG.error("Error connecting DB: SQL Error getting connection");
 			e.printStackTrace();
