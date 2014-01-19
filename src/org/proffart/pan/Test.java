@@ -28,7 +28,13 @@ public class Test extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		out.println("<form method='post' >");
+		out.println("<input name='user_name'>");
+		out.println("<input name='password'>");
+		out.println("<input type='submit'>");
+		out.println("</form>");
 	}
 
 	/**
