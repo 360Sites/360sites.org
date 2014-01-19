@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 public class User {
 	
-	static HttpSession session;
+	private static HttpSession session;
 	static Logger LOG = Logger.getLogger(DbManager.class);
 	
 	public static void setSession(HttpSession setSession) {
@@ -33,7 +33,7 @@ public class User {
 			DbManager db = DbManager.getInstance();
 			Connection connection  = DbManager.getConnection();
 			
-			//generacnum enq sql zaprosy
+			//generating sql query
 			String sql = "SELECT *, MD5(?) AS external_password FROM `user` WHERE `user_name` = ?";
 			PreparedStatement pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, password);
@@ -44,13 +44,13 @@ public class User {
 					boolean isValidUser = (userInfo.get("is_valid_user").equals("1"));
 					if( isValidUser ) { //stugum enq tvyal usery akti e te voch ete voch login cheq anum
 						isLogined = true;
-						//sesiaym grum enq perkakan informacia vory karox e shat texer petq gal
+						//saving session information
 						session.setAttribute("user_name", userInfo.get("user_name"));
 						session.setAttribute("user_id", userInfo.get("id"));
 						session.setAttribute("user_type_id", userInfo.get("user_type_id"));
 						session.setAttribute("first_name", userInfo.get("first_name"));
 						session.setAttribute("email", userInfo.get("email"));
-						session.setAttribute("phon_number", userInfo.get("phon_number"));
+						session.setAttribute("phone_number", userInfo.get("phone_number"));
 					}else{
 						LOG.error("user is invalid");
 					}
@@ -58,13 +58,13 @@ public class User {
 					LOG.error("incorrect password");
 				}
 			}else{
-				LOG.error("userName '"+userName+"' cannot exist");
+				LOG.error("userName '" +userName+ "' cannot exist");
 			}
 		} catch(SQLException e) {
-			LOG.error("Error DB: "+e.getMessage());
+			LOG.error("Error DB: " + e.getMessage());
 			e.printStackTrace();
 		} catch(Exception e) {
-			LOG.error("Error DB: "+e.getMessage());
+			LOG.error("Error DB: " + e.getMessage());
 			e.printStackTrace();
 		}
 		session.setAttribute("isLogined", isLogined);
