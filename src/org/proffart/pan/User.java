@@ -58,7 +58,7 @@ public class User {
 					LOG.error("incorrect password");
 				}
 			}else{
-				LOG.error("userName '" +userName+ "' cannot exist");
+				LOG.error("userName '" +userName+ "' does not exist");
 			}
 		} catch(SQLException e) {
 			LOG.error("Error DB: " + e.getMessage());
