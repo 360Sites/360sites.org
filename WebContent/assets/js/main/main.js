@@ -1,6 +1,7 @@
 (function( $ ) {
 	$.server = function( Cname, Cfunction, args, callBackFunction ) {
 		var argsJson = $.toJSON( args );
+		console.log(argsJson);
 		$.ajax({
 			type:		"POST",
 			data:		"className="+Cname+"&methodName"+Cfunction+"&args="+argsJson,
