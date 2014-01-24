@@ -11,6 +11,12 @@ import org.apache.log4j.Logger;
 
 
 public class User {
+	/*-arguments-*/
+	private String userName;
+	private String password;
+	/*-end-arguments-*/
+	
+	
 	
 	private static HttpSession session;
 	static Logger LOG = Logger.getLogger(DbManager.class);
@@ -27,7 +33,7 @@ public class User {
 		return isLogined;
 	}
 	
-	public static boolean login(String userName, String password) {
+	public boolean login() {
 		boolean isLogined = false;
 		try {
 			DbManager db = DbManager.getInstance();
