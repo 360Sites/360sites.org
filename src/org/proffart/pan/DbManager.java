@@ -155,7 +155,7 @@ public class DbManager {
 		try{
 			ArrayList<String> ret = new ArrayList<String>();
 			for(int col = 1; col <= rsmd.getColumnCount(); col++) {
-				String fildeName = rsmd.getColumnName(col);
+				String fildeName = rsmd.getColumnLabel(col+1);
 				ret.add(fildeName);
 			}
 			return ret;
@@ -196,7 +196,7 @@ public class DbManager {
 				while (rs.next()) {
 					HashMap<String, String> map = new HashMap<String, String>();
 					for(int col = 1; col <= rsmd.getColumnCount(); col++) {
-						String fildeName = rsmd.getColumnName(col);
+						String fildeName = rsmd.getColumnLabel(col+1);
 						map.put(fildeName, rs.getString(col));
 					}
 					row.add(map);
