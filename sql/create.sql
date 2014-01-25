@@ -45,3 +45,18 @@ CREATE TABLE `object`(
   PRIMARY KEY (`id`),
   INDEX (`user_id`)
 ) ENGINE=INNODB CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE `notification`(  
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `code` INT(11) NOT NULL,
+  `type` CHAR(1) NOT NULL DEFAULT 'I',
+  `text_en` VARCHAR(100) NOT NULL,
+  `title_en` VARCHAR(1500) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX (`code`)
+) ENGINE=MYISAM CHARSET=utf8 COLLATE=utf8_bin;
+
+INSERT INTO `notification` (`id`, `code`, `type`, `text_en`, `title_en`) VALUES 
+('1','1000','E','user is invalid',''),
+('2','1001','E','incorrect password',''),
+('3','1002','E','userName \'%s\' does not exist','');
