@@ -45,22 +45,30 @@ public class Gateway extends HttpServlet {
 	private void doRequest(HttpServletRequest request, HttpServletResponse response) {
 		User.setSession(request.getSession(true));
 		String json = "";
-		Object ret = new Object();
+		AjaxResult ret = new AjaxResult();
 		Gson gson = new Gson();
 		
 		String className = "org.proffart.pan." + request.getParameter("className");
 		String methodName = request.getParameter("methodName");
 		String argJsonString = request.getParameter("args");
+		
 		try{
 			Object obj =  gson.fromJson(argJsonString, Class.forName(className));
 			Method method = Class.forName(className).getMethod(methodName, new Class[] {});
-			ret = method.invoke(obj, new Object[] {});
-			json = gson.toJson(ret);
+			ret.result = method.invoke(obj, new Object[] {});
+			ret.notifications = Notification.getNotifications();
+			ret.status = true;
+		}catch(Exception e){
+			ret.status = false;
+			ret.exception = e.getMessage();
+		}
+		try{
 			response.setContentType("application/json");
 			PrintWriter out = response.getWriter();
+			json = gson.toJson(ret);
 			out.print(json);
 		}catch(Exception e){
-			e.printStackTrace();
+			//xz inch petqa anel vor inch vor ban tpi chgitem
 		}
 	}
 
