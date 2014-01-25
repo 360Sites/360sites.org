@@ -9,7 +9,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-
+/**
+ * Notification code 1000 - 1100 
+ * @author Ashot
+ *
+ */
 public class User {
 	/*-arguments-*/
 	private String userName;
@@ -58,20 +62,27 @@ public class User {
 						session.setAttribute("email", userInfo.get("email"));
 						session.setAttribute("phone_number", userInfo.get("phone_number"));
 					}else{
-						LOG.error("user is invalid");
+						Notification.error(1000);
+						//LOG.error("user is invalid");
 					}
 				}else{
-					LOG.error("incorrect password");
+					Notification.error(1001);
+					//LOG.error("incorrect password");
 				}
 			}else{
-				LOG.error("userName '" +userName+ "' does not exist");
+				Notification.textSprintfArgs = new Object[1];
+				Notification.textSprintfArgs[0] = userName;
+				Notification.error(1002);
+				//LOG.error("userName '" +userName+ "' does not exist");
 			}
 		} catch(SQLException e) {
-			LOG.error("Error DB: " + e.getMessage());
-			e.printStackTrace();
+			Notification.error(e.getMessage());
+			//LOG.error("Error DB: " + e.getMessage());
+			//e.printStackTrace();
 		} catch(Exception e) {
-			LOG.error("Error DB: " + e.getMessage());
-			e.printStackTrace();
+			Notification.error(e.getMessage());
+			//LOG.error("Error DB: " + e.getMessage());
+			//e.printStackTrace();
 		}
 		session.setAttribute("isLogined", isLogined);
 		return isLogined;
