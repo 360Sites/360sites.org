@@ -51,14 +51,7 @@ public class Test extends HttpServlet {
 		User.setSession(session);
 		
 		
-        String userName = request.getParameter("user_name");
-        String password = request.getParameter("password");
-        boolean ret = User.login(userName, password);
-        if(ret){
-        	out.println(" ~~~~ true ~~~~ ");
-        }else{
-        	out.println(" ~~~~ false ~~~~ ");
-        }
+      
         Enumeration e = session.getAttributeNames();
         while (e.hasMoreElements()) {
             String name = (String)e.nextElement();

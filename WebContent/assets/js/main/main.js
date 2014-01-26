@@ -4,17 +4,37 @@
 		console.log(argsJson);
 		$.ajax({
 			type:		"POST",
-			data:		"className="+Cname+"&methodName"+Cfunction+"&args="+argsJson,
+			data:		"className="+Cname+"&methodName="+Cfunction+"&args="+argsJson,
 			url:		"http://localhost:8080/360sites.org/gateway",
 			dataType:	"json",
 			success:	function(data)
 			{
+				if( typeof data.notifications !== undefined ) {
+					for( var i = 0; i<data.notifications.length; i++ ) {
+						var opts = data.notifications[i].opts,
+							text = data.notifications[i].text,
+							title = data.notifications[i].title;
+						switch(data.notifications[i].type) {
+							case "error":
+								toastr.error(text,title,opts);
+								break;
+							case "info":
+								toastr.info(text,title,opts);
+								break;
+							case "warning":
+								toastr.warning(text,title,opts);
+								break;
+							case "success":
+								toastr.success(text,title,opts);
+								break;
+						}
+					}
+				}
 				if( data["status"] === false ) {
-					alert(data["error"]);
 					console.log(data);
 				}
 				else{
-					if( callBackFunction !== undefined )
+					if( typeof callBackFunction !== undefined )
 					callBackFunction.call(this,data["result"]);
 				}
 			}

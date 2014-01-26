@@ -32,11 +32,21 @@ public class User {
 	public static boolean isLogined() {
 		boolean isLogined = false;
 		if( !session.isNew() ) {
-			isLogined = (Boolean) session.getAttribute("isLogined");
+			if(session.getAttribute("isLogined") != null ){
+				isLogined = (Boolean) session.getAttribute("isLogined");				
+			}
 		}
 		return isLogined;
 	}
-	
+	public static String getLang(){
+		String lang = "en";
+		if( !session.isNew() ) {
+			if(session.getAttribute("lang") != null ){
+				lang = (String) session.getAttribute("lang");				
+			}
+		}
+		return lang;
+	}
 	public boolean login() {
 		boolean isLogined = false;
 		try {
@@ -61,6 +71,7 @@ public class User {
 						session.setAttribute("first_name", userInfo.get("first_name"));
 						session.setAttribute("email", userInfo.get("email"));
 						session.setAttribute("phone_number", userInfo.get("phone_number"));
+						session.setAttribute("lang", "en"); //berel bazayic
 					}else{
 						Notification.error(1000);
 						//LOG.error("user is invalid");

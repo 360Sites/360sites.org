@@ -8,9 +8,13 @@ public class Notification {
 	public static Object[] titleSprintfArgs = new Object[0];
 	public static Object[] textSprintfArgs = new Object[0];
 	
+	public static void free(){
+		notifications = new ArrayList<Notifications>();
+	}
 	public static class Opts {
 		public boolean closeButton = true;
-		public String positionClass = "toast-bottom-right";
+		public String positionClass = "toast-top-right";
+		public String toastClass = ""; //black
 		public int showDuration = 300;
 		public int hideDuration = 1000;
 		public int timeOut = 5000;
@@ -31,13 +35,13 @@ public class Notification {
 		if(textSprintfArgs.length>0) {
 			for( Object obj : textSprintfArgs )
 				text = String.format(text, obj);
+			titleSprintfArgs = new Object[0];
 		}
 		if(titleSprintfArgs.length>0) {
 			for( Object obj : titleSprintfArgs )
 				title = String.format(title, obj);
+			textSprintfArgs = new Object[0];
 		}
-		titleSprintfArgs = new Object[0];
-		textSprintfArgs = new Object[0];
 		
 		Notifications not = new Notifications();
 		not.type = type;
@@ -130,7 +134,7 @@ public class Notification {
 	private static HashMap<String, String> getNotification(int code) {
 		HashMap<String, String> ret = new HashMap<String, String>();
 		try{
-			String lang = Global.getLang();
+			String lang = User.getLang();
 			DbManager db = DbManager.getInstance();
 			String sql = "SELECT `text_"+lang+"` AS `text`, `title_"+lang+"` AS `title` FROM notification WHERE `code` = "+Integer.toString(code);
 			ret = db.getRow(sql);

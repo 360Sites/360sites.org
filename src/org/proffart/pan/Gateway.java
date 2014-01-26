@@ -70,6 +70,10 @@ public class Gateway extends HttpServlet {
 		}catch(Exception e){
 			//xz inch petqa anel vor inch vor ban tpi chgitem
 		}
+		free();
+	}
+	private void free(){
+		Notification.free();
 	}
 
 }
