@@ -1,7 +1,6 @@
 package org.proffart.pan;
 
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.lang.Object;
 
 import org.apache.log4j.Logger;
 
@@ -24,12 +22,12 @@ import org.apache.log4j.Logger;
  *  * @author Karen S.,  Ashot M.
  *  * @version 1.0.1
  *    copyright 360Sites ,Proffart team 2013
- *     
+ *  This singleton class provides methods for connecting with DB,
+ *  inserting data into Db and getting rows from DB   
  *
  */
 
-public class DbManager {
-	
+public class DbManager {	
 	
 	private static Connection connection;
 	static Logger LOG = Logger.getLogger(DbManager.class);
@@ -38,12 +36,24 @@ public class DbManager {
 	private static DbManager DbManagerInstance;
 	private static String dbPropertyFile="//properties//DBconfig.properties";
 	
-	
-	private DbManager() {
+	/**
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	private DbManager() throws ClassNotFoundException, IOException, SQLException  {
 		getConnection(); 
 		isInit = true;
 	}
-	public static DbManager getInstance() {
+	
+	/**
+	 * 
+	 * @return instance of class (singleton pattern)
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static DbManager getInstance() throws ClassNotFoundException, IOException, SQLException {
 		if(!isInit) {
 			DbManagerInstance = new DbManager();
 		}
@@ -51,33 +61,19 @@ public class DbManager {
 	}
 	
 	/**
-	 * *@return Connection 
-	 * *@category Database  	  
-	 *
+	 * *@return DB Connection 
+	 * @category Database  	  
+	 * @throws ClassNotFoundException 
+	 * @throws IOException,  if fails reading properties
+	 * @throws SQLException 
 	 */
-	public static Connection getConnection() 
-	{
+	public static Connection getConnection() throws ClassNotFoundException, IOException, SQLException  {
 		if(isInit) {
 			return connection;
 		}
 		Properties DBprop=new Properties();
-		try {
-			
-			LOG.info("Getting DB config file: "+ dbPropertyFile);
-			DBprop.load(DbManager.class.getResourceAsStream(dbPropertyFile));
-		} catch (FileNotFoundException e) {
-			LOG.error("Error connecting DB: Cannot find DB property file ");			
-			e.printStackTrace();
-		} catch (IOException e) {
-			LOG.error("Error connecting DB: IO Exception");
-			e.printStackTrace();
-		}
-		try {
-			Class.forName(DBprop.getProperty("MySqlDriver"));
-		} catch (ClassNotFoundException e) {
-			LOG.error("Error connecting DB: Cannot find MysqlDriver");
-			e.printStackTrace();
-		}
+		DBprop.load(DbManager.class.getResourceAsStream(dbPropertyFile));
+		Class.forName(DBprop.getProperty("MySqlDriver"));
 		
 		//Getting properties from file
 		String DB_USERNAME = DBprop.getProperty("DBUserName");
@@ -89,83 +85,87 @@ public class DbManager {
 		String DB_URL="jdbc:mysql://" + serverName + "/" + databaseName;	
 		
 		//Connecting to database
-		try {
-			connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-			LOG.info("Connected to DB: Server="+serverName+", User="+DB_USERNAME);
-		} catch (SQLException e) {
-			LOG.error("Error connecting DB: SQL Error getting connection");
-			e.printStackTrace();
-		}
+		connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 		
 		return connection;
 	}
 	
-
-
-	
-	
-	public HashMap<String, String> getRow( String sql ) throws Exception {
-		try{
-			HashMap<String, String> map = new HashMap<String, String>();
-			PreparedStatement pstmt = connection.prepareStatement( sql );
-			ArrayList<HashMap<String, String>> list = executeAndGetHashMap(pstmt);
-			if(list.size() == 1){
-				map = list.get(0);
-			}
-			return map;
-		}catch( Exception e ){
-			e.printStackTrace();
-			throw new Exception(e);
+	/**
+	 * 
+	 * @param sql
+	 * @return
+	 * @throws SQLException
+	 */
+	public HashMap<String, String> getRow( String sql ) throws SQLException  {
+		HashMap<String, String> map = new HashMap<String, String>();
+		PreparedStatement pstmt = connection.prepareStatement( sql );
+		ArrayList<HashMap<String, String>> list = executeAndGetHashMap(pstmt);
+		if(list.size() == 1){
+			map = list.get(0);
 		}
-	}
-	public HashMap<String, String> getRow( PreparedStatement pstmt ) throws Exception {
-		try{
-			HashMap<String, String> map = new HashMap<String, String>();
-			ArrayList<HashMap<String, String>> list = executeAndGetHashMap(pstmt);
-			if(list.size() == 1){
-				map = list.get(0);
-			}
-			return map;
-		}catch( Exception e ){
-			e.printStackTrace();
-			throw new Exception(e);
-		}
-	}
-	public ArrayList<ArrayList<String>> getRowSet( String sql ) throws Exception {
-		try{
-			PreparedStatement pstmt = connection.prepareStatement( sql );
-			ArrayList<ArrayList<String>> row = executeAndGetList(pstmt);
-			return row;
-		}catch( Exception e ){
-			e.printStackTrace();
-			throw new Exception(e);
-		}
-	}
-	public ArrayList<ArrayList<String>> getRowSet( PreparedStatement pstmt  ) throws Exception {
-		try{
-			ArrayList<ArrayList<String>> row = new ArrayList<ArrayList<String>>();
-			row = executeAndGetList(pstmt);
-			return row;
-		}catch( Exception e ){
-			e.printStackTrace();
-			throw new Exception(e);
-		}
-	}
-	public ArrayList<String> getField() throws Exception{
-		try{
-			ArrayList<String> ret = new ArrayList<String>();
-			for(int col = 1; col <= rsmd.getColumnCount(); col++) {
-				String fildeName = rsmd.getColumnLabel(col);
-				ret.add(fildeName);
-			}
-			return ret;
-		}catch( Exception e ){
-			e.printStackTrace();
-			throw new Exception(e);
-		}
+		return map;
 	}
 	
-	public void insert( String tableName, HashMap<String, Object> insert ) throws Exception {
+	/**
+	 * 
+	 * @param pstmt
+	 * @return
+	 * @throws SQLException
+	 */
+	public HashMap<String, String> getRow( PreparedStatement pstmt ) throws SQLException  {
+		HashMap<String, String> map = new HashMap<String, String>();
+		ArrayList<HashMap<String, String>> list = executeAndGetHashMap(pstmt);
+		if(list.size() == 1){
+			map = list.get(0);
+		}
+		return map;
+	}
+	
+	/**
+	 * 
+	 * @param sql
+	 * @return
+	 * @throws SQLException
+	 */
+	public ArrayList<ArrayList<String>> getRowSet( String sql ) throws SQLException  {
+		PreparedStatement pstmt = connection.prepareStatement( sql );
+		ArrayList<ArrayList<String>> row = executeAndGetList(pstmt);
+		return row;
+	}
+	
+	/**
+	 * 
+	 * @param pstmt
+	 * @return
+	 * @throws SQLException
+	 */
+	public ArrayList<ArrayList<String>> getRowSet( PreparedStatement pstmt  ) throws SQLException  {
+		ArrayList<ArrayList<String>> row = new ArrayList<ArrayList<String>>();
+		row = executeAndGetList(pstmt);
+		return row;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public ArrayList<String> getField() throws SQLException  {
+		ArrayList<String> ret = new ArrayList<String>();
+		for(int col = 1; col <= rsmd.getColumnCount(); col++) {
+			String fildeName = rsmd.getColumnLabel(col);
+			ret.add(fildeName);
+		}
+		return ret;
+	}
+	
+	/**
+	 * 
+	 * @param tableName
+	 * @param insert
+	 * @throws SQLException
+	 */
+	public void insert( String tableName, HashMap<String, Object> insert ) throws SQLException {
 		String str1 = "";
 		String str2 = "";
 		ArrayList<String> val = new ArrayList<String>();
@@ -182,50 +182,52 @@ public class DbManager {
 			pstmt.setString(i, val.get(i-1));
 		}
 		if(!pstmt.execute()){
-			throw new Exception("error in db");
+			//throw new Exception("error in db"); aading our defined exception
 		}
 	}
 	
-	
-	private ArrayList<HashMap<String, String>> executeAndGetHashMap( PreparedStatement pstmt ) throws Exception  {
-		try{
-			ArrayList<HashMap<String, String>> row = new ArrayList<HashMap<String, String>>();
-			if(pstmt.execute()){
-				ResultSet rs = pstmt.getResultSet();
-				rsmd = rs.getMetaData();
-				while (rs.next()) {
-					HashMap<String, String> map = new HashMap<String, String>();
-					for(int col = 1; col <= rsmd.getColumnCount(); col++) {
-						String fildeName = rsmd.getColumnLabel(col);
-						map.put(fildeName, rs.getString(col));
-					}
-					row.add(map);
+	/**
+	 * 
+	 * @param pstmt
+	 * @return
+	 * @throws SQLException
+	 */
+	private ArrayList<HashMap<String, String>> executeAndGetHashMap( PreparedStatement pstmt ) throws SQLException {
+		ArrayList<HashMap<String, String>> row = new ArrayList<HashMap<String, String>>();
+		if(pstmt.execute()){
+			ResultSet rs = pstmt.getResultSet();
+			rsmd = rs.getMetaData();
+			while (rs.next()) {
+				HashMap<String, String> map = new HashMap<String, String>();
+				for(int col = 1; col <= rsmd.getColumnCount(); col++) {
+					String fildeName = rsmd.getColumnLabel(col);
+					map.put(fildeName, rs.getString(col));
 				}
+				row.add(map);
 			}
-			return row;
-		}catch( Exception e ){
-			e.printStackTrace();
-			throw new Exception(e);
 		}
+		return row;
 	}
-	private ArrayList<ArrayList<String>> executeAndGetList( PreparedStatement pstmt ) throws Exception  {
-		try{
-			ArrayList<ArrayList<String>> row = new ArrayList<ArrayList<String>>();
-			if(pstmt.execute()){
-				ResultSet rs = pstmt.getResultSet();
-				rsmd = rs.getMetaData();
-				while (rs.next()) {
-					ArrayList<String> map = new ArrayList<String>();
-					for(int col = 1; col <= rsmd.getColumnCount(); col++) {
-						map.add(rs.getString(col));
-					}
-					row.add(map);
+	
+	/**
+	 * 
+	 * @param pstmt
+	 * @return
+	 * @throws SQLException
+	 */
+	private ArrayList<ArrayList<String>> executeAndGetList( PreparedStatement pstmt ) throws SQLException  {
+		ArrayList<ArrayList<String>> row = new ArrayList<ArrayList<String>>();
+		if(pstmt.execute()){
+			ResultSet rs = pstmt.getResultSet();
+			rsmd = rs.getMetaData();
+			while (rs.next()) {
+				ArrayList<String> map = new ArrayList<String>();
+				for(int col = 1; col <= rsmd.getColumnCount(); col++) {
+					map.add(rs.getString(col));
 				}
+				row.add(map);
 			}
-			return row;
-		}catch( Exception e ){
-			e.printStackTrace();
-			throw new Exception(e);
 		}
+		return row;
 	}
 }
