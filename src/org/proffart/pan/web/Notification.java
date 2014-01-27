@@ -3,17 +3,15 @@ package org.proffart.pan.web;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.proffart.pan.DbManager;
 import org.proffart.pan.User;
 
 public class Notification {
-	private static ArrayList<Notifications> notifications = new ArrayList<Notifications>();
 	public static Object[] titleSprintfArgs = new Object[0];
 	public static Object[] textSprintfArgs = new Object[0];
 	
-	public static void free(){
-		notifications = new ArrayList<Notifications>();
-	}
 	public static class Opts {
 		public boolean closeButton = true;
 		public String positionClass = "toast-top-right";
@@ -34,7 +32,14 @@ public class Notification {
 		public Opts opts;
 	}
 	
-	public static void addNotification(String type, String text, String title, Opts opts ){
+	@SuppressWarnings("unchecked")
+	public static void addNotification(HttpServletRequest r, String type, String text, String title, Opts opts ){
+		ArrayList<Notifications> notifications;
+		if( r.getAttribute("notifications") instanceof ArrayList ) {
+			notifications = (ArrayList<Notifications>) r.getAttribute("notifications");
+		}else{
+			notifications = new ArrayList<Notifications>();
+		}
 		if(textSprintfArgs.length>0) {
 			for( Object obj : textSprintfArgs )
 				text = String.format(text, obj);
@@ -52,104 +57,112 @@ public class Notification {
 		not.title = title;
 		not.opts = opts;
 		notifications.add(not);
+		r.setAttribute("notifications", notifications);
 	}
 	/* -error- */
-	public static void error( String text, String title, Opts opts ) {
+	public static void error(HttpServletRequest r, String text, String title, Opts opts ) {
 		if(!text.isEmpty())
-			addNotification("error",text,title,opts);
+			addNotification(r, "error",text,title,opts);
 	}
-	public static void error( String text, String title ) {
+	public static void error(HttpServletRequest r, String text, String title ) {
 		Opts opts = new Opts();
-		error(text,title,opts);
+		error(r, text,title,opts);
 	}
-	public static void error( String text ) {
-		error(text,"");
+	public static void error(HttpServletRequest r, String text ) {
+		error(r, text,"");
 	}
-	public static void error( int code, Opts opts ) {
-		HashMap<String, String> res = getNotification(code);
-		error(res.get("text"),res.get("title"),opts);
+	public static void error(HttpServletRequest r, int code, Opts opts ) {
+		HashMap<String, String> res = getNotification(r, code);
+		error(r, res.get("text"),res.get("title"),opts);
 	}
-	public static void error( int code ) {
+	public static void error(HttpServletRequest r, int code ) {
 		Opts opts = new Opts();
-		error(code, opts);
+		error(r, code, opts);
 	}
 	/* -info- */
-	public static void info( String text, String title, Opts opts ) {
+	public static void info(HttpServletRequest r, String text, String title, Opts opts ) {
 		if(!text.isEmpty())
-			addNotification("info",text,title,opts);
+			addNotification(r, "info",text,title,opts);
 	}
-	public static void info( String text, String title ) {
+	public static void info(HttpServletRequest r, String text, String title ) {
 		Opts opts = new Opts();
-		info(text,title,opts);
+		info(r, text,title,opts);
 	}
-	public static void info( String text ) {
-		info(text,"");
+	public static void info(HttpServletRequest r, String text ) {
+		info(r, text,"");
 	}
-	public static void info( int code, Opts opts ) {
-		HashMap<String, String> res = getNotification(code);
-		info(res.get("text"),res.get("title"),opts);
+	public static void info(HttpServletRequest r, int code, Opts opts ) {
+		HashMap<String, String> res = getNotification(r, code);
+		info(r, res.get("text"),res.get("title"),opts);
 	}
-	public static void info( int code ) {
+	public static void info(HttpServletRequest r, int code ) {
 		Opts opts = new Opts();
-		info(code, opts);
+		info(r, code, opts);
 	}
 	/* -warning- */
-	public static void warning( String text, String title, Opts opts ) {
+	public static void warning(HttpServletRequest r, String text, String title, Opts opts ) {
 		if(!text.isEmpty())
-			addNotification("warning",text,title,opts);
+			addNotification(r, "warning",text,title,opts);
 	}
-	public static void warning( String text, String title ) {
+	public static void warning(HttpServletRequest r, String text, String title ) {
 		Opts opts = new Opts();
-		warning(text,title,opts);
+		warning(r, text,title,opts);
 	}
-	public static void warning( String text ) {
-		warning(text,"");
+	public static void warning(HttpServletRequest r, String text ) {
+		warning(r, text,"");
 	}
-	public static void warning( int code, Opts opts ) {
-		HashMap<String, String> res = getNotification(code);
-		warning(res.get("text"),res.get("title"),opts);
+	public static void warning(HttpServletRequest r, int code, Opts opts ) {
+		HashMap<String, String> res = getNotification(r, code);
+		warning(r, res.get("text"),res.get("title"),opts);
 	}
-	public static void warning( int code ) {
+	public static void warning(HttpServletRequest r, int code ) {
 		Opts opts = new Opts();
-		warning(code, opts);
+		warning(r, code, opts);
 	}
 	/* -success - */
-	public static void success ( String text, String title, Opts opts ) {
+	public static void success(HttpServletRequest r, String text, String title, Opts opts ) {
 		if(!text.isEmpty())
-			addNotification("success ",text,title,opts);
+			addNotification(r, "success ",text,title,opts);
 	}
-	public static void success ( String text, String title ) {
+	public static void success(HttpServletRequest r, String text, String title ) {
 		Opts opts = new Opts();
-		success (text,title,opts);
+		success(r, text,title,opts);
 	}
-	public static void success ( String text ) {
-		success (text,"");
+	public static void success(HttpServletRequest r, String text ) {
+		success(r, text,"");
 	}
-	public static void success( int code, Opts opts ) {
-		HashMap<String, String> res = getNotification(code);
-		success(res.get("text"),res.get("title"),opts);
+	public static void success(HttpServletRequest r, int code, Opts opts ) {
+		HashMap<String, String> res = getNotification(r, code);
+		success(r, res.get("text"),res.get("title"),opts);
 	}
-	public static void success( int code ) {
+	public static void success(HttpServletRequest r, int code ) {
 		Opts opts = new Opts();
-		success(code, opts);
+		success(r, code, opts);
 	}
 	
-	private static HashMap<String, String> getNotification(int code) {
+	private static HashMap<String, String> getNotification(HttpServletRequest r, int code) {
 		HashMap<String, String> ret = new HashMap<String, String>();
 		try{
-			String lang = User.getLang();
+			String lang = User.getLang(r);
 			DbManager db = DbManager.getInstance();
 			String sql = "SELECT `text_"+lang+"` AS `text`, `title_"+lang+"` AS `title` FROM notification WHERE `code` = "+Integer.toString(code);
 			ret = db.getRow(sql);
 		}catch(Exception e){
-			error(e.getMessage());
+			error(r, e.getMessage());
 			ret.put("text", Integer.toString(code));
 			ret.put("title",Integer.toString(code));
 		}
 		return ret;
 	}
 	
-	public static Object[] getNotifications(){
+	@SuppressWarnings("unchecked")
+	public static Object[] getNotifications(HttpServletRequest r){
+		ArrayList<Notifications> notifications;
+		if( r.getAttribute("notifications") instanceof ArrayList ) {
+			notifications = (ArrayList<Notifications>) r.getAttribute("notifications");
+		}else{
+			notifications = new ArrayList<Notifications>();
+		}
 		return notifications.toArray();
 	}
 }
