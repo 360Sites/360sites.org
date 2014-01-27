@@ -45,7 +45,6 @@ public class Gateway extends HttpServlet {
 	}
 	
 	private void doRequest(HttpServletRequest request, HttpServletResponse response) {
-		User.setSession(request.getSession(true));
 		String json = "";
 		AjaxResult result = new AjaxResult();
 		Gson gson = new Gson();
@@ -55,11 +54,17 @@ public class Gateway extends HttpServlet {
 		String argJsonString = request.getParameter("args");
 		
 		try{
-			Object obj =  gson.fromJson(argJsonString, Class.forName(className));
-			Method method = Class.forName(className).getMethod(methodName, new Class[] {});
-			result.result = method.invoke(obj, new Object[] {});
-			result.notifications = Notification.getNotifications();
-			result.status = true;
+			if( methodName != "setRequest" && className != "org.proffart.pan.beans._Base" ){
+				Object obj =  gson.fromJson(argJsonString, Class.forName(className));
+				Method setRequest = Class.forName(className).getMethod("setRequest",HttpServletRequest.class);
+				setRequest.invoke(obj, request);
+				Method method = Class.forName(className).getMethod(methodName, new Class[] {});
+				result.result = method.invoke(obj, new Object[] {});
+				result.notifications = Notification.getNotifications(request);
+				result.status = true;
+			}else{
+				result.exception = "You must be joking";
+			}
 		}catch(Exception e){
 			result.status = false;
 			result.exception = "exception";
@@ -72,10 +77,6 @@ public class Gateway extends HttpServlet {
 		}catch(Exception e){
 			//xz inch petqa anel vor inch vor ban tpi chgitem
 		}
-		free();
-	}
-	private void free(){
-		Notification.free();
 	}
 
 }
