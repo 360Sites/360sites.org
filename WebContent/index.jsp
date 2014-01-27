@@ -1,10 +1,10 @@
 <%@page import="org.proffart.pan.User"%>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-User.setSession(request.getSession(true));
-if(User.isLogined()){%>
 
-<p>ashot</p>
+if(User.isLogined(request)){%>
+
+<%@include file="dashboard/main/index1.html" %>
 
 <%}else{%>
 
