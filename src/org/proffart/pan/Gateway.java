@@ -48,7 +48,7 @@ public class Gateway extends HttpServlet {
 		AjaxResult ret = new AjaxResult();
 		Gson gson = new Gson();
 		
-		String className = "org.proffart.pan." + request.getParameter("className");
+		String className = "org.proffart.pan.beans._" + request.getParameter("className");
 		String methodName = request.getParameter("methodName");
 		String argJsonString = request.getParameter("args");
 		
@@ -60,7 +60,7 @@ public class Gateway extends HttpServlet {
 			ret.status = true;
 		}catch(Exception e){
 			ret.status = false;
-			ret.exception = e.getMessage();
+			ret.exception = "exception";
 		}
 		try{
 			response.setContentType("application/json");
