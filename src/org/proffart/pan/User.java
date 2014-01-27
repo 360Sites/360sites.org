@@ -4,9 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.proffart.pan.web.Notification;
 
 /**
@@ -14,17 +14,16 @@ import org.proffart.pan.web.Notification;
  * @author Ashot
  *
  */
-public class User {
-	
-	private static HttpSession session;
-	static Logger LOG = Logger.getLogger(DbManager.class);
-	
-	public static void setSession(HttpSession setSession) {
-		session = setSession;
+public class User extends Base{
+
+	public User(HttpServletRequest r) {
+		super(r);
 	}
 	
-	public static boolean isLogined() {
+	
+	public static boolean isLogined(HttpServletRequest r) {
 		boolean isLogined = false;
+		HttpSession session = r.getSession(true);
 		if( !session.isNew() ) {
 			if(session.getAttribute("isLogined") != null ){
 				isLogined = (Boolean) session.getAttribute("isLogined");				
@@ -32,8 +31,9 @@ public class User {
 		}
 		return isLogined;
 	}
-	public static String getLang(){
+	public static String getLang(HttpServletRequest r){
 		String lang = "en";
+		HttpSession session = r.getSession(true);
 		if( !session.isNew() ) {
 			if(session.getAttribute("lang") != null ){
 				lang = (String) session.getAttribute("lang");				
@@ -43,7 +43,7 @@ public class User {
 	}
 	public boolean login(String userName, String password) throws Exception {
 		boolean isLogined = false;
-
+		HttpSession session = request.getSession(true);
 		DbManager db = DbManager.getInstance();
 		Connection connection  = DbManager.getConnection();
 		
@@ -58,6 +58,8 @@ public class User {
 				boolean isValidUser = (userInfo.get("is_valid_user").equals("1"));
 				if( isValidUser ) { //stugum enq tvyal usery akti e te voch ete voch login cheq anum
 					isLogined = true;
+					
+					
 					//saving session information
 					session.setAttribute("user_name", userInfo.get("user_name"));
 					session.setAttribute("user_id", userInfo.get("id"));
@@ -67,18 +69,15 @@ public class User {
 					session.setAttribute("phone_number", userInfo.get("phone_number"));
 					session.setAttribute("lang", "en"); //berel bazayic
 				}else{
-					Notification.error(1000);
-					//LOG.error("user is invalid");
+					Notification.error(request,1000);
 				}
 			}else{
-				Notification.error(1001);
-				//LOG.error("incorrect password");
+				Notification.error(request,1001);
 			}
 		}else{
 			Notification.textSprintfArgs = new Object[1];
 			Notification.textSprintfArgs[0] = userName;
-			Notification.error(1002);
-			//LOG.error("userName '" +userName+ "' does not exist");
+			Notification.error(request,1002);
 		}
 		session.setAttribute("isLogined", isLogined);
 		return isLogined;
