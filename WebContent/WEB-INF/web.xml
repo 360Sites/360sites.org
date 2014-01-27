@@ -16,6 +16,9 @@
   metadata-complete="true"
   id="WebApp_ID">
 -->
+
+
+
   <display-name>360sites.org</display-name>
   <session-config>
   	<session-timeout>30</session-timeout>
@@ -43,4 +46,15 @@
     <servlet-name>Gateway</servlet-name>
     <url-pattern>/gateway</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+  <display-name>FileUpload</display-name>
+   <servlet-name>FileUpload</servlet-name>
+   <servlet-class>org.proffart.pan.fileManager.FileUpload</servlet-class>
+</servlet>
+
+<servlet-mapping>
+   <servlet-name>FileUpload</servlet-name>
+   <url-pattern>/Upload/upload</url-pattern>
+</servlet-mapping>
 </web-app>
