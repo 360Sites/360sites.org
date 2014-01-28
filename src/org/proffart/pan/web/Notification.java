@@ -1,7 +1,10 @@
-package org.proffart.pan;
+package org.proffart.pan.web;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.proffart.pan.DbManager;
+import org.proffart.pan.User;
 
 public class Notification {
 	private static ArrayList<Notifications> notifications = new ArrayList<Notifications>();

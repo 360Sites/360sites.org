@@ -7,6 +7,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.proffart.pan.web.Notification;
 
 /**
  * Notification code 1000 - 1100 

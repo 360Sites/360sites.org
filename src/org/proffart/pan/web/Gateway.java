@@ -1,4 +1,4 @@
-package org.proffart.pan;
+package org.proffart.pan.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.proffart.pan.DbManager;
+import org.proffart.pan.User;
 
 import com.google.gson.Gson;
 
@@ -45,7 +47,7 @@ public class Gateway extends HttpServlet {
 	private void doRequest(HttpServletRequest request, HttpServletResponse response) {
 		User.setSession(request.getSession(true));
 		String json = "";
-		AjaxResult ret = new AjaxResult();
+		AjaxResult result = new AjaxResult();
 		Gson gson = new Gson();
 		
 		String className = "org.proffart.pan.beans._" + request.getParameter("className");
@@ -55,17 +57,17 @@ public class Gateway extends HttpServlet {
 		try{
 			Object obj =  gson.fromJson(argJsonString, Class.forName(className));
 			Method method = Class.forName(className).getMethod(methodName, new Class[] {});
-			ret.result = method.invoke(obj, new Object[] {});
-			ret.notifications = Notification.getNotifications();
-			ret.status = true;
+			result.result = method.invoke(obj, new Object[] {});
+			result.notifications = Notification.getNotifications();
+			result.status = true;
 		}catch(Exception e){
-			ret.status = false;
-			ret.exception = "exception";
+			result.status = false;
+			result.exception = "exception";
 		}
 		try{
 			response.setContentType("application/json");
 			PrintWriter out = response.getWriter();
-			json = gson.toJson(ret);
+			json = gson.toJson(result);
 			out.print(json);
 		}catch(Exception e){
 			//xz inch petqa anel vor inch vor ban tpi chgitem

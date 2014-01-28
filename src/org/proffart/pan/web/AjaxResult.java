@@ -1,4 +1,4 @@
-package org.proffart.pan;
+package org.proffart.pan.web;
 
 public class AjaxResult {
 	public boolean status = false;
