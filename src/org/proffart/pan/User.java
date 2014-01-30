@@ -44,14 +44,12 @@ public class User extends Base{
 					userName = "Anonymous user";
 				}			
 			}
-			return userName;
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			return userName;
 		}
-		
+		return userName;
 	}
 	
 	public static boolean isLogined(HttpServletRequest r) {
