@@ -1,7 +1,7 @@
 var isInitApp1 = 0;
 $(function() {
 	$.ajax({
-		url : APP_HTML_URL+"app1.html",
+		url : APP_HTML_URL+"objects.html",
 		success : function(data) {
 			$('#app').html(data);
 			isInitApp1++;
@@ -10,7 +10,7 @@ $(function() {
 		}
 	});
 	$.ajax({
-		url : APP_MODAL_URL+"app1.html",
+		url : APP_MODAL_URL+"m-objects.html",
 		success : function(data) {
 			$('#modal').html(data);
 			isInitApp1++;
