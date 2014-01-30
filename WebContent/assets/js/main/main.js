@@ -1,3 +1,7 @@
+var APP_HTML_URL = "http://localhost:8080/360sites.org/app/html/";
+var APP_MODAL_URL = "http://localhost:8080/360sites.org/app/modal/";
+var APP_JS_URL = "http://localhost:8080/360sites.org/app/js/";
+
 (function( $ ) {
 	$.server = function( Cname, Cfunction, args, callBackFunction ) {
 		var argsJson = $.toJSON( args );
