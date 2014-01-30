@@ -23,11 +23,11 @@ public class User extends Base{
 	}
 	
 	/**
-	 * Getting userName
+	 * Getting user's first Name
 	 * @param r
-	 * @return r 
+	 * @return Name
 	 */
-	public static String  getUserName(HttpServletRequest r)
+	public static String  getName(HttpServletRequest r)
 	{
 		HttpSession session = r.getSession(true);
 		String userName = null;
@@ -35,9 +35,9 @@ public class User extends Base{
 		{			
 			if (isLogined(r))
 			{
-				if (session.getAttribute("user_name") != null)
+				if (session.getAttribute("first_name") != null)
 				{
-					userName = session.getAttribute("user_name").toString();
+					userName = session.getAttribute("first_name").toString();
 				}
 				else
 				{
