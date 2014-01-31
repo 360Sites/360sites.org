@@ -7,6 +7,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.catalina.Session;
 import org.proffart.pan.web.Notification;
 
 /**
@@ -15,11 +16,43 @@ import org.proffart.pan.web.Notification;
  *
  */
 public class User extends Base{
+	//private static HttpSession session;
 
 	public User(HttpServletRequest r) {
 		super(r);
 	}
 	
+	/**
+	 * Getting userName
+	 * @param r
+	 * @return r 
+	 */
+	public static String  getUserName(HttpServletRequest r)
+	{
+		HttpSession session = r.getSession(true);
+		String userName = null;
+		try
+		{			
+			if (isLogined(r))
+			{
+				if (session.getAttribute("user_name") != null)
+				{
+					userName = session.getAttribute("user_name").toString();
+				}
+				else
+				{
+					userName = "Anonymous user";
+				}			
+			}
+			return userName;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return userName;
+		}
+		
+	}
 	
 	public static boolean isLogined(HttpServletRequest r) {
 		boolean isLogined = false;
