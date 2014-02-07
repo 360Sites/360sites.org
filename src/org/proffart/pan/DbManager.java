@@ -182,10 +182,10 @@ public class DbManager {
 		for( int i=1; i<=val.size(); i++ ) {
 			pstmt.setString(i, val.get(i-1));
 		}
-		if(!pstmt.execute()){
-			//throw new Exception("error in db"); aading our defined exception
+		int id = -1;
+		if(pstmt.execute()){
+			id = pstmt.getGeneratedKeys().getInt(1);
 		}
-		int id = pstmt.getGeneratedKeys().getInt(1);
 		return id;
 	}
 	
