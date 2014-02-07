@@ -42,6 +42,8 @@ CREATE TABLE `object`(
   `name` VARCHAR(150),
   `location` VARCHAR(255),
   `description` VARCHAR(4500),
+  `del_status` BOOLEAN DEFAULT FALSE,
+  `del_date` DATETIME,
   PRIMARY KEY (`id`),
   INDEX (`user_id`)
 ) ENGINE=INNODB CHARSET=utf8 COLLATE=utf8_bin;
