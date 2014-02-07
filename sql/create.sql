@@ -54,7 +54,7 @@ CREATE TABLE `notification`(
   `title_en` VARCHAR(1500) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX (`code`)
-) ENGINE=MYISAM CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=INNODB CHARSET=utf8 COLLATE=utf8_bin;
 
 INSERT INTO `notification` (`id`, `code`, `type`, `text_en`, `title_en`) VALUES 
 ('1','1000','E','user is invalid',''),
