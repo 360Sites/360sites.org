@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 
 public class DbManager {	
 	
-	private static Connection connection;
+	private static Connection connection = null;
 	static Logger LOG = Logger.getLogger(DbManager.class);
 	private ResultSetMetaData rsmd;
 	private static boolean isInit =false;
@@ -69,7 +69,7 @@ public class DbManager {
 	 * @throws SQLException 
 	 */
 	public static Connection getConnection() throws ClassNotFoundException, IOException, SQLException  {
-		if(isInit) {
+		if( connection != null ) {
 			return connection;
 		}
 		Properties DBprop=new Properties();
