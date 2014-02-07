@@ -47,7 +47,7 @@ public class UserObject extends Base{
 	 */
 	public void deleteObject (int id) throws ClassNotFoundException, IOException, SQLException
 	{
-		String query = "UPDATE object SET isdeleted = true AND delete_day = NOW() WHERE id = "+id+" AND user_id = "+User.getId(request);
+		String query = "UPDATE object SET del_status = TRUE AND del_date = NOW() WHERE id = "+id+" AND user_id = "+User.getId(request);
 		Connection con = DbManager.getConnection();
 		PreparedStatement pstmt = con.prepareStatement(query);
 		ResultSet rst = pstmt.executeQuery(query);				
