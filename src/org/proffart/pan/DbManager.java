@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -165,7 +166,7 @@ public class DbManager {
 	 * @param insert
 	 * @throws SQLException
 	 */
-	public void insert( String tableName, HashMap<String, Object> insert ) throws SQLException {
+	public int insert( String tableName, HashMap<String, Object> insert ) throws SQLException {
 		String str1 = "";
 		String str2 = "";
 		ArrayList<String> val = new ArrayList<String>();
@@ -177,13 +178,15 @@ public class DbManager {
 		str1 = str1.substring(0,-2);
 		str2 = str2.substring(0,-2);
 		String sql = "INSERT INTO `"+tableName+"` ("+str1+") VALUES ("+str2+")";
-		PreparedStatement pstmt = connection.prepareStatement( sql );
+		PreparedStatement pstmt = connection.prepareStatement( sql, Statement.RETURN_GENERATED_KEYS );
 		for( int i=1; i<=val.size(); i++ ) {
 			pstmt.setString(i, val.get(i-1));
 		}
 		if(!pstmt.execute()){
 			//throw new Exception("error in db"); aading our defined exception
 		}
+		int id = pstmt.getGeneratedKeys().getInt(1);
+		return id;
 	}
 	
 	/**
