@@ -33,7 +33,7 @@ public class FileUpload extends HttpServlet {
    @Override
    protected void doPost(HttpServletRequest request, HttpServletResponse response)
            throws ServletException, IOException {
- LOG.info("Uplading file...");
+ LOG.info("Uploading file...");
        //process only if its multipart content
        if(ServletFileUpload.isMultipartContent(request)){
            try {
