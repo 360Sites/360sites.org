@@ -22,6 +22,32 @@ public class User extends Base{
 		super(r);
 	}
 	
+	public static int getId (HttpServletRequest r)
+	{
+		HttpSession session = r.getSession(true);
+		int id = -1;
+		try
+		{			
+			if (isLogined(r))
+			{
+				if (session.getAttribute("user_id") != null)
+				{
+					id = (int) session.getAttribute("user_id");
+				}
+				else
+				{
+					id = -1;
+				}			
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return id;
+	}
+	
+	
 	/**
 	 * Getting user's first Name
 	 * @param r
