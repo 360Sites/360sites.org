@@ -128,9 +128,9 @@ public class DbManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	public ArrayList<ArrayList<String>> getRowSet( String sql ) throws SQLException  {
+	public ArrayList<HashMap<String, String>> getRowSet( String sql ) throws SQLException  {
 		PreparedStatement pstmt = connection.prepareStatement( sql );
-		ArrayList<ArrayList<String>> row = executeAndGetList(pstmt);
+		ArrayList<HashMap<String, String>> row = executeAndGetHashMap(pstmt);
 		return row;
 	}
 	
@@ -140,9 +140,9 @@ public class DbManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	public ArrayList<ArrayList<String>> getRowSet( PreparedStatement pstmt  ) throws SQLException  {
-		ArrayList<ArrayList<String>> row = new ArrayList<ArrayList<String>>();
-		row = executeAndGetList(pstmt);
+	public ArrayList<HashMap<String, String>> getRowSet( PreparedStatement pstmt  ) throws SQLException  {
+		ArrayList<HashMap<String, String>> row = new ArrayList<>();
+		row = executeAndGetHashMap(pstmt);
 		return row;
 	}
 	
