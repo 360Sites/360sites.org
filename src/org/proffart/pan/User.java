@@ -32,7 +32,7 @@ public class User extends Base{
 			{
 				if (session.getAttribute("user_id") != null)
 				{
-					id = (int) session.getAttribute("user_id");
+					id = Integer.parseInt( (String) session.getAttribute("user_id") );
 				}
 				else
 				{
