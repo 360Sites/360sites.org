@@ -175,16 +175,18 @@ public class DbManager {
 			str2 += "?, ";
 			val.add( entry.getValue().toString() );
 		}
-		str1 = str1.substring(0,-2);
-		str2 = str2.substring(0,-2);
+		str1 = str1.substring(0,str1.length()-2);
+		str2 = str2.substring(0,str2.length()-2);
 		String sql = "INSERT INTO `"+tableName+"` ("+str1+") VALUES ("+str2+")";
 		PreparedStatement pstmt = connection.prepareStatement( sql, Statement.RETURN_GENERATED_KEYS );
 		for( int i=1; i<=val.size(); i++ ) {
 			pstmt.setString(i, val.get(i-1));
 		}
 		int id = -1;
-		if(pstmt.execute()){
-			id = pstmt.getGeneratedKeys().getInt(1);
+		pstmt.execute();
+		ResultSet rs = pstmt.getGeneratedKeys();
+		if (rs.next()){
+			id = rs.getInt(1);
 		}
 		return id;
 	}
