@@ -22,7 +22,7 @@ public class User extends Base{
 		super(r);
 	}
 	
-	public static int getId (HttpServletRequest r)
+	public static int getID (HttpServletRequest r)
 	{
 		HttpSession session = r.getSession(true);
 		int id = -1;
