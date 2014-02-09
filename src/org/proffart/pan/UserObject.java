@@ -33,7 +33,7 @@ public class UserObject extends Base{
 	 * @throws IOException 
 	 * @throws ClassNotFoundException 
 	 */
-	public int createObject ( HashMap <String, Object> fields) throws ClassNotFoundException, IOException, SQLException
+	public int createObject ( HashMap <String, String> fields) throws ClassNotFoundException, IOException, SQLException
 	{
 		HashMap <String, Object> rows = new HashMap<>();
 		rows.put("id", fields.get("id"));
