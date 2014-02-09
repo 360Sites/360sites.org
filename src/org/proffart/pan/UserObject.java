@@ -28,7 +28,7 @@ public class UserObject extends Base{
 	{
 		HashMap <String, Object> rows = new HashMap<>();
 		rows.put("id", fields.get("id"));
-		rows.put("user_id", fields.get(User.getId(request)));
+		rows.put("user_id", fields.get(User.getID(request)));
 		rows.put("name", fields.get("name"));
 		rows.put("description", fields.get("descripton"));
 		rows.put("location", fields.get("location"));
@@ -47,10 +47,13 @@ public class UserObject extends Base{
 	 */
 	public void deleteObject (int id) throws ClassNotFoundException, IOException, SQLException
 	{
-		String query = "UPDATE object SET del_status = TRUE AND del_date = NOW() WHERE id = "+id+" AND user_id = "+User.getId(request);
+		String query = "UPDATE object SET del_status = TRUE AND del_date = NOW() WHERE id = "+id+" AND user_id = "+User.getID(request);
 		Connection con = DbManager.getConnection();
 		PreparedStatement pstmt = con.prepareStatement(query);
 		ResultSet rst = pstmt.executeQuery(query);				
+	}
+	public String fileGetPath() {
+		return "test/";
 	}
 
 }
