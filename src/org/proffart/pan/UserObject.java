@@ -11,8 +11,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.sun.corba.se.impl.util.Version;
-
 /**
  * 
  * @author Aram
@@ -35,7 +33,7 @@ public class UserObject extends Base{
 	 */
 	public List <HashMap <String, String>> getObjects () throws ClassNotFoundException, IOException, SQLException
 	{
-		String query = "SELECT * FROM object WHERE user_id = " + User.getId(request) + " AND del_status <> TRUE";
+		String query = "SELECT * FROM object WHERE user_id = " + User.getID(request) + " AND del_status <> TRUE";
 		DbManager instance = DbManager.getInstance();
 		ArrayList <HashMap<String, String>> rowset = instance.getRowSet(query);
 		return rowset;			
@@ -53,7 +51,7 @@ public class UserObject extends Base{
 	{
 		HashMap <String, Object> rows = new HashMap<>();
 		rows.put("id", fields.get("id"));
-		rows.put("user_id", fields.get(User.getId(request)));
+		rows.put("user_id", fields.get(User.getID(request)));
 		rows.put("name", fields.get("name"));
 		rows.put("description", fields.get("descripton"));
 		rows.put("location", fields.get("location"));
@@ -74,7 +72,7 @@ public class UserObject extends Base{
 		int id = Integer.parseInt(fields.get("id"));
 		String query = "UPDATE object SET name = " + fields.get("name") + " AND description = "
 				 + fields.get("description") + " AND location = " + fields.get("location") 
-				 + " WHERE id = " + id +" AND user_id = " + User.getId(request);
+				 + " WHERE id = " + id +" AND user_id = " + User.getID(request);
 		Connection con = DbManager.getConnection();
 		PreparedStatement pstmt = con.prepareStatement(query);
 		ResultSet rst = pstmt.executeQuery(query);			
@@ -89,7 +87,7 @@ public class UserObject extends Base{
 	 */
 	public void deleteObject (int id) throws ClassNotFoundException, IOException, SQLException
 	{
-		String query = "UPDATE object SET del_status = TRUE AND del_date = NOW() WHERE id = "+id+" AND user_id = "+User.getId(request);
+		String query = "UPDATE object SET del_status = TRUE AND del_date = NOW() WHERE id = "+id+" AND user_id = "+User.getID(request);
 		Connection con = DbManager.getConnection();
 		PreparedStatement pstmt = con.prepareStatement(query);
 		ResultSet rst = pstmt.executeQuery(query);				
