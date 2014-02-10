@@ -36,7 +36,7 @@ public class UserObject extends Base{
 		String query = "SELECT * FROM object WHERE user_id = " + User.getID(request) + " AND del_status <> TRUE";
 		DbManager instance = DbManager.getInstance();
 		ArrayList <HashMap<String, String>> rowset = instance.getRowSet(query);
-		return rowset;			
+		return rowset;
 	}
 		
 	/**
@@ -50,10 +50,9 @@ public class UserObject extends Base{
 	public int createObject ( HashMap <String, String> fields) throws ClassNotFoundException, IOException, SQLException
 	{
 		HashMap <String, Object> rows = new HashMap<>();
-		rows.put("id", fields.get("id"));
-		rows.put("user_id", fields.get(User.getID(request)));
+		rows.put("user_id", User.getID(request));
 		rows.put("name", fields.get("name"));
-		rows.put("description", fields.get("descripton"));
+		rows.put("description", fields.get("description"));
 		rows.put("location", fields.get("location"));
 		DbManager db = DbManager.getInstance();
 		int id = db.insert("object", rows);
@@ -70,12 +69,16 @@ public class UserObject extends Base{
 	public void editObject (HashMap<String, String> fields) throws ClassNotFoundException, IOException, SQLException
 	{
 		int id = Integer.parseInt(fields.get("id"));
-		String query = "UPDATE object SET name = " + fields.get("name") + " AND description = "
-				 + fields.get("description") + " AND location = " + fields.get("location") 
-				 + " WHERE id = " + id +" AND user_id = " + User.getID(request);
-		Connection con = DbManager.getConnection();
-		PreparedStatement pstmt = con.prepareStatement(query);
-		ResultSet rst = pstmt.executeQuery(query);			
+		
+		String query = "UPDATE object SET name = ? , description = ? , location = ? WHERE id = ? AND user_id = ? ";
+		Connection connection = DbManager.getConnection();
+		PreparedStatement pstmt = connection.prepareStatement( query );
+		pstmt.setString(1, fields.get("name"));
+		pstmt.setString(2, fields.get("description"));
+		pstmt.setString(3, fields.get("location"));
+		pstmt.setInt(4, id);
+		pstmt.setInt(5, User.getID(request));
+		pstmt.execute();
 	}
 	
 	/**
@@ -87,10 +90,10 @@ public class UserObject extends Base{
 	 */
 	public void deleteObject (int id) throws ClassNotFoundException, IOException, SQLException
 	{
-		String query = "UPDATE object SET del_status = TRUE AND del_date = NOW() WHERE id = "+id+" AND user_id = "+User.getID(request);
+		String query = "UPDATE object SET del_status = TRUE , del_date = NOW() WHERE id = "+id+" AND user_id = "+User.getID(request);
 		Connection con = DbManager.getConnection();
 		PreparedStatement pstmt = con.prepareStatement(query);
-		ResultSet rst = pstmt.executeQuery(query);				
+		pstmt.execute();
 	}
 
 }

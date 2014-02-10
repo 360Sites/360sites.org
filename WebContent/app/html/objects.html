@@ -8,28 +8,26 @@
 	</div>
 </div>
 
-<hr>
-
-<div class="row">
-	<div class="col-sm-12">
-		<div class="wall" data-object-id="1">
+<div id="object-data"></div>
+<script id="object-tmpl" type="text/x-jquery-tmpl">
+<div class="row" data-object-id="${id}">
+	<hr>
+	<div id="object-data" class="col-sm-12">
+		<div class="wall">
 			<div class="col-sm-4">
-				<h2 class="object-name">Object Name</h2>
+				<h2 class="object-name">${name}</h2>
 			</div>
 			<div class="col-sm-4">
-				<p class="object-description">Object Description Object Description Object Description Object Description Object Description Object Description 
-				Object Description Object Description Object Description Object Description Object Description Object Description Object 
-				Description Object Description Object Description Object Description Object Description 
-				Object Description Object Description Object Description Object Description </p>
-				<h4 class="object-address">Object Description </h4>
+				<p class="object-description">${description}</p>
+				<h4 class="object-address">${location}</h4>
 			</div>
 			<div class="col-sm-4">
-				<a class="btn btn-default btn-sm btn-icon icon-left" onclick="editObject(1);">
+				<a class="btn btn-default btn-sm btn-icon icon-left" onclick="editObject(${id});">
 					<i class="entypo-pencil"></i>
 					Edit
 				</a>
 				
-				<a class="btn btn-danger btn-sm btn-icon icon-left" onclick="deleteObject(1);">
+				<a class="btn btn-danger btn-sm btn-icon icon-left" onclick="deleteObject(${id});">
 					<i class="entypo-cancel"></i>
 					Delete
 				</a>
@@ -37,3 +35,4 @@
 		</div>
 	</div>
 </div>
+</script>

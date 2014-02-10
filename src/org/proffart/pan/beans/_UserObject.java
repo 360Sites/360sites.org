@@ -8,29 +8,28 @@ import java.util.List;
 import org.proffart.pan.UserObject;
 
 public class _UserObject extends _Base {
-	private UserObject instance = new UserObject(request);
 	private HashMap<String, String > fields = new HashMap<>();
+	private int ID;
 	
-	
-	public int createObject () throws ClassNotFoundException, IOException, SQLException
-	{
-		
+	public int createObject () throws ClassNotFoundException, IOException, SQLException	{
+		UserObject instance = new UserObject(request);
 		return (instance.createObject(fields));
 	}
 	
-	public void editObject () throws ClassNotFoundException, IOException, SQLException
-	{
+	public boolean editObject () throws ClassNotFoundException, IOException, SQLException	{
+		UserObject instance = new UserObject(request);
 		instance.editObject(fields);
+		return true;
 	}
 	
-	public void deleteObject () throws ClassNotFoundException, IOException, SQLException
-	{
-		int id = Integer.parseInt(fields.get("id"));
-		instance.deleteObject(id);
+	public boolean deleteObject () throws ClassNotFoundException, IOException, SQLException {
+		UserObject instance = new UserObject(request);
+		instance.deleteObject(ID);
+		return true;
 	}
 	
-	public List <HashMap <String, String>> getObjects() throws ClassNotFoundException, IOException, SQLException
-	{
+	public List <HashMap <String, String>> getObjects() throws ClassNotFoundException, IOException, SQLException {
+		UserObject instance = new UserObject(request);
 		return (instance.getObjects());
 	}
 

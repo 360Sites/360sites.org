@@ -4,7 +4,7 @@ var APP_JS_URL = "http://localhost:8080/360sites.org/app/js/";
 
 (function( $ ) {
 	$.server = function( Cname, Cfunction, args, callBackFunction ) {
-		var argsJson = $.toJSON( args );
+		var argsJson = JSON.stringify( args );
 		console.log(argsJson);
 		$.ajax({
 			type:		"POST",

@@ -1,26 +1,29 @@
-var isInitApp1 = 0;
+var isInitAppObjects = 0;
 $(function() {
 	$.ajax({
 		url : APP_HTML_URL+"objects.html",
 		success : function(data) {
 			$('#app').html(data);
-			isInitApp1++;
-			if(isInitApp1 == 2)
-				initApp1();
+			isInitAppObjects++;
+			if(isInitAppObjects == 2)
+				initAppObjects();
 		}
 	});
 	$.ajax({
 		url : APP_MODAL_URL+"m-objects.html",
 		success : function(data) {
 			$('#modal').html(data);
-			isInitApp1++;
-			if(isInitApp1 == 2)
-				initApp1();
+			isInitAppObjects++;
+			if(isInitAppObjects == 2)
+				initAppObjects();
 		}
 	});
 });
-function initApp1() {
+function initAppObjects() {
 	$("#modal textarea.autogrow").autosize();
+	$.server("UserObject","getObjects",{},function(data){
+		$('#object-tmpl').tmpl(data).appendTo('#object-data');
+	});
 }
 function newObject(){
 	$('#object-info-modal .modal-title').text("New Object");
@@ -43,30 +46,38 @@ function editObject(id){
 	$('#object-info-modal').modal('show', {backdrop: 'static'});
 }
 function deleteObject(id){
-	$.server("","deleteObject",{'id':id},onDeleteObject);
+	$.server("UserObject","deleteObject",{'ID':id},onDeleteObject);
 	function onDeleteObject(data) {
 		$("div[data-object-id='"+id+"']").remove();
 	}
 }
 function saveObject(){
 	var saveData = {
-		id:$('#object-id').val(),
-		name:$('#object-name').val(),
-		address:$('#object-address').val(),
-		description:$('#object-description').val()
+		fields:{
+			name:$('#object-name').val(),
+			location:$('#object-address').val(),
+			description:$('#object-description').val()
+		}
 	};
-	if(!saveData.id){
-		$.server("","createObject",saveData,onCreateObject);
-		function onCreateObject(data) {
+	var ID = parseInt($('#object-id').val());
+	if(!ID){
+		$.server("UserObject","createObject",saveData,onCreateObject);
+		function onCreateObject(id) {
+			saveData.fields.id = id;
+			$('#object-tmpl').tmpl(saveData.fields).appendTo('#object-data');
+			$('#object-info-modal').modal('hide');
+			
 			//saveData
 		}
 	}else{
-		$.server("","editObject",saveData,onEditObject);
+		saveData.fields.id = ID;
+		$.server("UserObject","editObject",saveData,onEditObject);
 		function onEditObject(data) {
-			var element = $("div[data-object-id='"+id+"']");
-			element.find(".object-name").text(saveData.name);
-			element.find(".object-address").text(saveData.address);
-			element.find(".object-description").text(saveData.description);
+			var element = $("div[data-object-id='"+ID+"']");
+			element.find(".object-name").text(saveData.fields.name);
+			element.find(".object-address").text(saveData.fields.address);
+			element.find(".object-description").text(saveData.fields.description);
+			$('#object-info-modal').modal('hide');
 		}
 	}
 }

@@ -19,7 +19,6 @@
 	<link rel="stylesheet" href="assets/css/custom.css"  id="style-resource-5">
 
 	<script src="assets/js/jquery-1.10.2.min.js"></script>
-	<script src="assets/js/json/jquery.json-2.4.min.js"></script>
 	<script src="assets/js/toastr.js"></script>
 	<script src="assets/js/main/main.js"></script>
 
@@ -39,6 +38,9 @@ if(User.isLogined(request)){%>
 			<div class="main-content">
 				<%@include file="system/header.jsp" %>
 				<%@include file="system/content.jsp" %>
+				
+				
+				
 				<%@include file="system/footer.jsp" %>
 			</div>
 		<%@include file="system/chat.jsp" %>

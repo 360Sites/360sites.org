@@ -22,4 +22,7 @@
 	<script src="assets/js/neon-demo.js" id="script-resource-18"></script>
 	<script src="assets/js/neon-skins.js" id="script-resource-19"></script>
 	
+	
+	
+<!-- 	<script src="app/js/testupload.js" id="script-app-objects"></script> -->
 	<script src="app/js/objects.js" id="script-app-objects"></script>
