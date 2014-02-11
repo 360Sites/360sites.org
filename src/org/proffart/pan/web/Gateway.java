@@ -9,10 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-import org.proffart.pan.DbManager;
-import org.proffart.pan.User;
-
 import com.google.gson.Gson;
 
 
@@ -22,7 +18,7 @@ import com.google.gson.Gson;
  */
 public class Gateway extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static Logger LOG = Logger.getLogger(DbManager.class);   
+	//private static Logger LOG = Logger.getLogger(DbManager.class);   
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -49,7 +45,8 @@ public class Gateway extends HttpServlet {
 		AjaxResult result = new AjaxResult();
 		Gson gson = new Gson();
 		
-		String className = "org.proffart.pan.beans._" + request.getParameter("className");
+		String originalClassName = request.getParameter("className");
+		String className = "org.proffart.pan.beans._" + originalClassName;
 		String methodName = request.getParameter("methodName");
 		String argJsonString = request.getParameter("args");
 		
@@ -58,6 +55,8 @@ public class Gateway extends HttpServlet {
 				Object obj =  gson.fromJson(argJsonString, Class.forName(className));
 				Method setRequest = Class.forName(className).getMethod("setRequest",HttpServletRequest.class);
 				setRequest.invoke(obj, request);
+				Method createInstance = Class.forName(className).getMethod("createInstance",new Class[] {});
+				createInstance.invoke(obj, new Object[] {});
 				Method method = Class.forName(className).getMethod(methodName, new Class[] {});
 				result.result = method.invoke(obj, new Object[] {});
 				result.notifications = Notification.getNotifications(request);
