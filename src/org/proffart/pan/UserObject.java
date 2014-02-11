@@ -11,12 +11,28 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.sun.corba.se.impl.util.Version;
+
+/**
+ * 
+ * @author Aram
+ * class provides methods for creating, updating ,
+ * deleting and getting  user's objects (places)
+ */
 public class UserObject extends Base{
 
 	public UserObject(HttpServletRequest r) {
 		super(r);
 		
 	}
+	
+	/**
+	 * 
+	 * @return list of objects of user
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	public List <HashMap <String, String>> getObjects () throws ClassNotFoundException, IOException, SQLException
 	{
 		String query = "SELECT * FROM object WHERE user_id = " + User.getId(request) + " AND del_status <> TRUE";
@@ -26,12 +42,12 @@ public class UserObject extends Base{
 	}
 		
 	/**
-	 * 
-	 * @param r
+	 *  
 	 * @param fields HashMap from request with key value pairs
 	 * @throws SQLException 
 	 * @throws IOException 
-	 * @throws ClassNotFoundException 
+	 * @throws ClassNotFoundException
+	 * return id of created object 
 	 */
 	public int createObject ( HashMap <String, String> fields) throws ClassNotFoundException, IOException, SQLException
 	{
@@ -46,6 +62,13 @@ public class UserObject extends Base{
 		return id;
 	}
 	
+	/**
+	 * 
+	 * @param fields key value pairs for updating
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	public void editObject (HashMap<String, String> fields) throws ClassNotFoundException, IOException, SQLException
 	{
 		int id = Integer.parseInt(fields.get("id"));
@@ -59,8 +82,7 @@ public class UserObject extends Base{
 	
 	/**
 	 * 
-	 * @param r
-	 * @param id
+	 * @param id object id which must be deleted
 	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 * @throws SQLException
