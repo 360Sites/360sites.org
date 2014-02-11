@@ -141,7 +141,7 @@ public class DbManager {
 	 * @throws SQLException
 	 */
 	public ArrayList<HashMap<String, String>> getRowSet( PreparedStatement pstmt  ) throws SQLException  {
-		ArrayList<HashMap<String, String>> row = new ArrayList<>();
+		ArrayList<HashMap<String, String>> row = new ArrayList<HashMap<String, String>>();
 		row = executeAndGetHashMap(pstmt);
 		return row;
 	}

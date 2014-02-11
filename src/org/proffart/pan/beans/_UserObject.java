@@ -8,7 +8,7 @@ import java.util.List;
 import org.proffart.pan.UserObject;
 
 public class _UserObject extends _Base {
-	private HashMap<String, String > fields = new HashMap<>();
+	private HashMap<String, String > fields = new HashMap<String, String >();
 	private int ID;
 	
 	public int createObject () throws ClassNotFoundException, IOException, SQLException	{
