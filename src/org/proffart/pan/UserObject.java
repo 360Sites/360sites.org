@@ -27,7 +27,6 @@ public class UserObject extends Base{
 	}
 	
 	/**
-	 * 
 	 * @return list of objects of user
 	 * @throws ClassNotFoundException
 	 * @throws IOException
