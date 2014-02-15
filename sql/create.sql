@@ -66,12 +66,12 @@ INSERT INTO `notification` (`id`, `code`, `type`, `text_en`, `title_en`) VALUES
 CREATE TABLE `file`(  
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `user_id` INT(11) NOT NULL,
-  `full_path` CHAR(255) NOT NULL,
-  `url_path` CHAR(255) NOT NULL,
+  `path` CHAR(255) NOT NULL,
+  `file_name` CHAR(255) NOT NULL,
   `name` CHAR(100) NOT NULL,
   `mime_type` CHAR(50) NOT NULL,
   `creation_date` DATETIME,
-  `seize` BIGINT,
+  `size` BIGINT,
   `del_status` BOOLEAN DEFAULT FALSE,
   `del_date` DATETIME,
   PRIMARY KEY (`id`)
