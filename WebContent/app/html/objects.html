@@ -15,7 +15,7 @@
 	<div id="object-data" class="col-sm-12">
 		<div class="wall">
 			<div class="col-sm-4">
-				<h2 class="object-name">${name}</h2>
+				<h2 class="object-name" onclick="runObjectPanImages({objectName:$(this).text(),objectID:${id}})">${name}</h2>
 			</div>
 			<div class="col-sm-4">
 				<p class="object-description">${description}</p>
