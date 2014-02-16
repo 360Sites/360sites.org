@@ -39,6 +39,7 @@ public class FileUpload extends HttpServlet {
     private String storagePath;
     private String path;
     private String className;
+    private HashMap<String, Object> params;
     private ServletConfig config;
 
     @Override
@@ -51,12 +52,13 @@ public class FileUpload extends HttpServlet {
 		public String mimeType ="";
 		public long size = 0;
 		public String path = "";
+		public String fileName = "";
 	}
     public static class FileList {
     	public int from = 0;
     	public int limit = 0;
     	public int maxRowCount = 0;
-    	public ObjectFile[] data = null;
+    	public ObjectFile[] files = null;
     }
     private static class UploadResult {
     	public ObjectFile[] files;
@@ -65,11 +67,63 @@ public class FileUpload extends HttpServlet {
         * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
         * 
         */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	String action = ""; 
+    	String paramsString = "";
+    	Gson gson = new Gson(); 
     	if(request.getParameter("class") != null)
 			className = request.getParameter("class");
-
+    	className = "org.proffart.pan." + className;
+    	if(request.getParameter("action") != null)
+    		action = request.getParameter("action");
+    	if(request.getParameter("params") != null)
+    		paramsString = request.getParameter("params");
+    	if(!paramsString.isEmpty()){
+    		params = gson.fromJson(paramsString,HashMap.class);
+    	}
+        PrintWriter writer = response.getWriter();
+        response.setContentType("application/json");
+    	switch (action) {
+    	case "delete" :
+    		String delResult = "";
+    		try{
+    			int fileID = Integer.parseInt(request.getParameter("file_id"));
+    			callBackDel(request, fileID);
+    			String sql = "SELECT `name` FROM `file` WHERE id = "+fileID;
+    			DbManager db = DbManager.getInstance();
+    			HashMap<String, String> tmp = db.getRow(sql);
+    			delResult = "{\"files\":[{\""+tmp.get("name")+"\": true}]}";
+    		}catch( Exception e ){
+    			//ss
+    		}finally{
+	            writer.write(gson.toJson(delResult));
+	            writer.close();
+			}
+		default:
+			int from = 0;
+			int limit = 0;
+			if(request.getParameter("from") != null)
+				from = Integer.parseInt(request.getParameter("from"));
+			if(request.getParameter("limit") != null)
+				from = Integer.parseInt(request.getParameter("limit"));
+			FileList result = new FileList(); 
+			try{
+				Class<?> dynClass = Class.forName(className);
+		    	Constructor<?> ctor = dynClass.getConstructor(HttpServletRequest.class);
+		    	Object obj = ctor.newInstance(request);
+		    	Method fileGetLst = Class.forName(className).getMethod("fileGetLst",int.class,int.class,HashMap.class);
+		    	result = (FileList) fileGetLst.invoke(obj, from, limit, params);
+			}catch( Exception e ){
+				//
+			}finally{
+	            writer.write(gson.toJson(result));
+	            writer.close();
+			}
+			break;
+		}
+/*
         
         if (request.getParameter("getfile") != null && !request.getParameter("getfile").isEmpty()) {
             File file = new File(fileUploadPath,
@@ -129,18 +183,26 @@ public class FileUpload extends HttpServlet {
         } else {
             PrintWriter writer = response.getWriter();
             writer.write("call POST with multipart form data");
-        }
+        }*/
     }
     
     /**
         * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
         * 
         */
+    @SuppressWarnings("unchecked")
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	if(request.getParameter("class") != null)
 			className = request.getParameter("class");
-    	
+    	className = "org.proffart.pan." + className;
+    	String paramsString = "";
+    	Gson gson = new Gson();
+    	if(request.getParameter("params") != null)
+    		paramsString = request.getParameter("params");
+    	if(!paramsString.isEmpty()){
+    		params = gson.fromJson(paramsString,HashMap.class);
+    	}
     	
         if (!ServletFileUpload.isMultipartContent(request)) {
             throw new IllegalArgumentException("Request is not multipart, please 'multipart/form-data' enctype for your form.");
@@ -148,7 +210,6 @@ public class FileUpload extends HttpServlet {
         try {
 			getConfig(request);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -174,15 +235,16 @@ public class FileUpload extends HttpServlet {
                     item.write(file);
                     HashMap<String, Object> insert = new HashMap<String, Object>();
                     int userID = User.getID(request);
-                    objectItem.path = path+tmpName;
-
+                    objectItem.fileName = tmpName;
+                    objectItem.path = path;
+                    
                     insert.put("user_id", userID);
-                    insert.put("full_path", storagePath+tmpName);
-                    insert.put("url_path", objectItem.path);
+                    insert.put("path", objectItem.path);
+                    insert.put("file_name", objectItem.fileName);
                     insert.put("mime_type", objectItem.mimeType);
                     insert.put("name", objectItem.name);
                     insert.put("creation_date", new java.sql.Date(System.currentTimeMillis()));
-                    insert.put("seize", objectItem.size);
+                    insert.put("size", objectItem.size);
                     
                     DbManager db = DbManager.getInstance();
                     objectItem.id = db.insert("file", insert);
@@ -199,7 +261,7 @@ public class FileUpload extends HttpServlet {
                 }
             }
             if(objectItem != null) {
-            	callBackAdd(request, objectItem, new Object());
+            	callBackAdd(request, objectItem);
             	uploadResult.files = new ObjectFile[1];
             	uploadResult.files[0] = objectItem;
             }
@@ -208,8 +270,7 @@ public class FileUpload extends HttpServlet {
         } catch (Exception e) {
                 throw new RuntimeException(e);
         } finally {
-        	Gson gson = new Gson();
-            writer.write(gson.toJson(uploadResult));
+        	writer.write(gson.toJson(uploadResult));
             writer.close();
         }
 
@@ -224,32 +285,19 @@ public class FileUpload extends HttpServlet {
 		storagePath += path;
 		fileUploadPath = new File(storagePath);
     }
-    private void callBackAdd(HttpServletRequest request, ObjectFile file, Object params ) throws Exception {
+    private void callBackAdd(HttpServletRequest request, ObjectFile file ) throws Exception {
     	Class<?> dynClass = Class.forName(className);
     	Constructor<?> ctor = dynClass.getConstructor(HttpServletRequest.class);
     	Object obj = ctor.newInstance(request);
-		Method fileAdd = Class.forName(className).getMethod("fileAdd", ObjectFile.class, Object.class);
+		Method fileAdd = Class.forName(className).getMethod("fileAdd", ObjectFile.class, HashMap.class);
 		fileAdd.invoke(obj,file,params);
     }
-
-    private String getMimeType(File file) {
-        String mimetype = "";
-        if (file.exists()) {
-            javax.activation.MimetypesFileTypeMap mtMap = new javax.activation.MimetypesFileTypeMap();
-            mimetype  = mtMap.getContentType(file);
-        }
-        return mimetype;
+    private void callBackDel(HttpServletRequest request, int fileID ) throws Exception {
+    	Class<?> dynClass = Class.forName(className);
+    	Constructor<?> ctor = dynClass.getConstructor(HttpServletRequest.class);
+    	Object obj = ctor.newInstance(request);
+		Method fileDel = Class.forName(className).getMethod("fileDel", int.class, HashMap.class);
+		fileDel.invoke(obj,fileID,params);
     }
-
-
-
-    private String getSuffix(String filename) {
-        String suffix = "";
-        int pos = filename.lastIndexOf('.');
-        if (pos > 0 && pos < filename.length() - 1) {
-            suffix = filename.substring(pos + 1);
-        }
-        System.out.println("suffix: " + suffix);
-        return suffix;
-    }
+    
 }

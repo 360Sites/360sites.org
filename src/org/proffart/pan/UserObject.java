@@ -10,6 +10,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.proffart.pan.fileManager.FileUpload.FileList;
+import org.proffart.pan.fileManager.FileUpload.ObjectFile;
+
 /**
  * 
  * @author Aram
@@ -94,5 +97,33 @@ public class UserObject extends Base{
 		PreparedStatement pstmt = con.prepareStatement(query);
 		pstmt.execute();
 	}
+	public String fileGetPath() {
+		return "test/";
+	}
+	public FileList fileGetLst(int from, int limit, HashMap<String, Object> params) throws Exception  {
+		String sql = "SELECT * FROM `file`";
+		DbManager db = DbManager.getInstance();
+		ArrayList<HashMap<String, String>> data = db.getRowSet(sql);
+		ObjectFile[] files = new ObjectFile[data.size()];
+		for( int i=0 ; i<data.size(); i++ ) {
+			files[i] = new ObjectFile();
+			files[i].name = data.get(i).get("name");
+			files[i].id = Integer.parseInt(data.get(i).get("id"));
+			files[i].size = Long.parseLong(data.get(i).get("size"));
+			files[i].path = data.get(i).get("path");
+			files[i].fileName = data.get(i).get("file_name");
+			files[i].mimeType = data.get(i).get("mime_type");
+		}
+		FileList result = new FileList();
+		result.files = files;
+		return result;
+	}
+	public void fileAdd(ObjectFile file, HashMap<String, Object> params) {
+		
+	}
+	public void fileDel(int fileID, HashMap<String, Object> params) {
+		
+	}
+	
 
 }

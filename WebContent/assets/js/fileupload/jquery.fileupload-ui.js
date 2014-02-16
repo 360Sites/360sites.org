@@ -71,8 +71,20 @@
             },
 
             // Callback to retrieve the list of files from the server response:
-            getFilesFromResponse: function (data) {
+            getFilesFromResponse: function (data,action) {
                 if (data.result && $.isArray(data.result.files)) {
+                	//proffart
+                	for(var index in data.result.files) {
+                		var obj = data.result.files[index];
+                		obj.url = obj.path + obj.fileName; 
+                		obj.thumbnailUrl = obj.url;
+                		obj.deleteUrl = action + "&action=delete&file_id="+obj.id;
+                		obj.deleteType = "GET";
+                	}
+                	console.log(data.result.files);
+                    /*thumbnail_url
+                    delete_url
+                    delete_type*/
                     return data.result.files;
                 }
                 return [];
@@ -128,7 +140,7 @@
             },
             // Callback for the start of each file upload request:
             send: function (e, data) {
-                if (e.isDefaultPrevented()) {
+            	if (e.isDefaultPrevented()) {
                     return false;
                 }
                 var that = $(this).data('blueimp-fileupload') ||
@@ -152,14 +164,14 @@
             },
             // Callback for successful uploads:
             done: function (e, data) {
-            	if (e.isDefaultPrevented()) {
+            	if (e && e.isDefaultPrevented()) {
                     return false;
                 }
                 var that = $(this).data('blueimp-fileupload') ||
                         $(this).data('fileupload'),
                     getFilesFromResponse = data.getFilesFromResponse ||
                         that.options.getFilesFromResponse,
-                    files = getFilesFromResponse(data),
+                    files = getFilesFromResponse(data,this.action),
                     template,
                     deferred;
                 console.log(files);

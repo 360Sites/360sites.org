@@ -24,6 +24,7 @@ function initAppObjects() {
 	$.server("UserObject","getObjects",{},function(data){
 		$('#object-tmpl').tmpl(data).appendTo('#object-data');
 	});
+	$.fileManager("#file","UserObject",{objectID:4});
 }
 function newObject(){
 	$('#object-info-modal .modal-title').text("New Object");

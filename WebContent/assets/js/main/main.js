@@ -5,7 +5,6 @@ var APP_JS_URL = "http://localhost:8080/360sites.org/app/js/";
 (function( $ ) {
 	$.server = function( Cname, Cfunction, args, callBackFunction ) {
 		var argsJson = JSON.stringify( args );
-		console.log(argsJson);
 		$.ajax({
 			type:		"POST",
 			data:		"className="+Cname+"&methodName="+Cfunction+"&args="+argsJson,
@@ -60,5 +59,35 @@ var APP_JS_URL = "http://localhost:8080/360sites.org/app/js/";
 				}
 			}
 		});
+	};
+	$.fileManager = function( selector ,className, params ) {
+		$(function() {
+			$.ajax({
+				url : APP_HTML_URL+"upload.html",
+				success : function(data) {
+					$(selector).html(data);
+					initFileManager();
+				}
+			});
+		});
+		function initFileManager() {
+			$("#fileupload").prop({
+				id:className,
+				action:"upload?class="+className+"&params=" + JSON.stringify(params)
+			});
+			$('#'+className).find("input[name='class']").val(className);
+			$('#'+className).fileupload();
+			$('#'+className).each(function () {
+				var that = this;
+				$.getJSON(this.action, function (result) {
+					if (result && result.files && result.files.length) {
+						$(that).fileupload('option', 'done')
+						.call(that, null, {result: result});
+					}
+				});
+			});
+			replaceCheckboxes();
+			//$("#modal textarea.autogrow").autosize();
+		}
 	};
 })(jQuery);
