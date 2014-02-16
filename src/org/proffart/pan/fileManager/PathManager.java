@@ -20,13 +20,13 @@ import org.apache.log4j.Logger;
 public class PathManager {
 	static Logger LOG = Logger.getLogger(PathManager.class);
 
-	private static String PROPERTY_FILE="//properties//360Sites.properties";
+	private static final String PROPERTY_FILE="//properties//360Sites.properties";
 	private static String USER_DATA_DIRECTORY;
 
-	private static String PANORAMAS="panoramas//";
-	private static String PICTURES="pictures//";
-	private static String ICONS="icons//";
-	private static String OTHER="other//";
+	private static final String PANORAMAS="panoramas//";
+	private static final String PICTURES="pictures//";
+	private static final String ICONS="icons//";
+	private static final String OTHER="other//";
 
 
 
