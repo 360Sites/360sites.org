@@ -57,3 +57,8 @@
 	
 <!-- 	<script src="app/js/testupload.js" id="script-app-objects"></script> -->
 	<script src="app/js/objects.js" id="script-app-objects"></script>
+	<script src="app/js/object-pan-images.js" id="script-app-objects-pan-images"></script>
+	
+	
+	
+	
